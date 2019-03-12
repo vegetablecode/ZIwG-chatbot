@@ -23,7 +23,7 @@ class Home extends Component {
           <div className="col s12 m7">
             <div className="card">
               <div className="card-content">
-                <h1>Hello {name}</h1>
+                <h1>Hello {name} from TravisCI</h1>
               </div>
             </div>
           </div>
