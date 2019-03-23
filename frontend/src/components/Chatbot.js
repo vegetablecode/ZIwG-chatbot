@@ -9,7 +9,7 @@ class Chatbot extends Component {
   state = {
     question: "",
     message: "",
-    loading: true
+    loading: false
   };
 
   componentDidMount() {
@@ -25,9 +25,6 @@ class Chatbot extends Component {
     if (nextProps.errors) {
       this.setState({ errors: nextProps.errors });
     }
-    this.setState({
-      loading: false
-    });
   }
 
   onSubmit = e => {
