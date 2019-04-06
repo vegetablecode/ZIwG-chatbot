@@ -42,7 +42,7 @@ class Chatbot extends Component {
 
   onSubmit = e => {
     e.preventDefault();
-    this.setState({ currentQuestion: "siema" });
+    this.setState({ currentQuestion: this.state.question });
     this.forceUpdate();
     this.getRequest();
   };
