@@ -1,16 +1,24 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { getRequests, createRequest } from "../actions/requestActions";
+import { logout } from "../actions/securityActions";
 import PropTypes from "prop-types";
-import SingleRequest from "./Chatbot/SingleRequest";
+import UserRequest from "./Chatbot/UserRequest";
 import BotResponse from "./Chatbot/BotResponse";
+import IdleTimer from "react-idle-timer";
 
 class Chatbot extends Component {
   state = {
     question: "",
     message: "",
     loading: false,
-    currentQuestion: ""
+    currentQuestion: "",
+    requestsLength: ""
+  };
+
+  onIdle = e => {
+    this.props.logout();
+    window.location.href = "/login";
   };
 
   componentDidMount() {
@@ -40,23 +48,28 @@ class Chatbot extends Component {
     this.scrollToBottom();
   }
 
-  onSubmit = e => {
+  onSubmit = length => e => {
     e.preventDefault();
-    this.setState({ currentQuestion: this.state.question });
-    this.forceUpdate();
-    this.getRequest();
+    const len = length + 1;
+    this.setState({
+      currentQuestion: this.state.question,
+      requestsLength: len
+    });
+    this.getRequest(len);
   };
 
-  getRequest = () => {
+  getRequest = (len) => {
     const newRequest = {
       question: this.state.question
     };
     this.props.createRequest(newRequest, this.props.history);
-    this.forceUpdate();
+    this.setState({
+      requestsLength: len
+    });
   };
 
   logout = e => {
-    this.props.logout();
+    this.logout.bind(this);
     window.location.href = "/";
   };
 
@@ -66,27 +79,40 @@ class Chatbot extends Component {
 
   render() {
     const { requests } = this.props.request;
+    let length = Object.keys(requests).length;
+    let stateLength = this.state.requestsLength;
+    console.log("render: " + length);
+    console.log("state: " + stateLength);
 
     let temporaryQuestion;
-    if (this.state.currentQuestion === "") {
+    if (length >= this.state.requestsLength) {
       temporaryQuestion = "";
     } else {
       const tempRequest = {
         requestOwner: "User",
-        question: this.state.question,
+        question: this.state.currentQuestion,
         responseText: "",
         responseType: ""
       };
       temporaryQuestion = (
         <div>
-          <SingleRequest key={"temp"} request={tempRequest} showBotAnswer={false} />
-          <BotResponse request={tempRequest} />
+          <UserRequest key={"temp"} request={tempRequest} />
+          <BotResponse key={"tempbot"} request={tempRequest} />
         </div>
       );
     }
 
     return (
       <div>
+        <IdleTimer
+          ref={ref => {
+            this.idleTimer = ref;
+          }}
+          element={document}
+          onIdle={this.onIdle}
+          debounce={250}
+          timeout={1000 * 60 * 5}
+        />
         <div className="container">
           <h4 className="center">Chatbot</h4>
           <div
@@ -96,18 +122,19 @@ class Chatbot extends Component {
             }}
           >
             {requests.map(request => (
-              <SingleRequest
-                key={request.id}
-                request={request}
-                showBotAnswer={true}
-              />
+              <div key={request.id}>
+                <UserRequest request={request} />
+                <BotResponse request={request} />
+              </div>
             ))}
             {temporaryQuestion}
           </div>
           <div>
-            <form onSubmit={this.onSubmit} className="row submit-query">
+            <form onSubmit={this.onSubmit(length)} className="row submit-query">
               <input
-                ref={(input) => { this.nameInput = input; }}
+                ref={input => {
+                  this.nameInput = input;
+                }}
                 className="col s10"
                 name="question"
                 id="text"
@@ -132,7 +159,8 @@ Chatbot.propTypes = {
   request: PropTypes.object.isRequired,
   getRequests: PropTypes.func.isRequired,
   createRequest: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  logout: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -143,5 +171,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getRequests, createRequest }
+  { getRequests, createRequest, logout }
 )(Chatbot);
