@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class RequestService {
@@ -48,14 +45,30 @@ public class RequestService {
         return userRequests;
     }
 
-    public String getResponseType(Map<String, String> responseParams) {
-        Set<String> keys = responseParams.keySet();
+    public String getMessageIntent(String username, String conversationId) {
+        Iterable<Request> userRequests = findAllUserRequests(username);
+        for(Request userRequest: userRequests) {
+            if((userRequest.getConversationId().equals(conversationId)) && (!userRequest.getIntent().equals("")))
+                    return userRequest.getIntent();
+        }
+        return "";
+    }
 
-        // weather case
-        if(keys.contains("date") && keys.contains("location") && keys.contains("time")) return "weather";
-        else if(keys.contains("bottom_text") && keys.contains("top_text")) return "meme";
+    public Map<String, String> setAnswerRating(Map<String, String> rating) {
+        Iterable<Request> userRequests = findAllUserRequests(rating.get("username"));
+        Map<String, String> status = new HashMap<>();
+        Request ratedRequest;
+        for(Request userRequest: userRequests) {
+            if (userRequest.getId().equals(Long.parseLong(rating.get("id")))) {
+                ratedRequest = userRequest;
+                ratedRequest.setResponseRating(rating.get("rating"));
+                requestRepository.save(ratedRequest);
+                status.put("status", "ok");
+                return status;
+            }
+        }
 
-        // nothing case
-        else return "";
+        status.put("status", "error");
+        return status;
     }
 }
