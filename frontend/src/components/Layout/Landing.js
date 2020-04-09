@@ -11,7 +11,7 @@ class Landing extends Component {
             <br />
             <br />
             <h1 className="header center blue-text text-darken-4">
-              Nokia Chatbot
+              Innovative Chatbot
             </h1>
             <div className="row center">
               <h5 className="header col s12 light">
@@ -60,13 +60,8 @@ class Landing extends Component {
                   <h5 className="center">Based on IBM Watson</h5>
 
                   <p className="light">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Suspendisse dignissim aliquet interdum. Nunc tempus odio ac
-                    finibus ornare. Class aptent taciti sociosqu ad litora
-                    torquent per conubia nostra, per inceptos himenaeos. Etiam
-                    varius condimentum sapien, eu tempus ante malesuada semper.
-                    Proin rutrum mi luctus nulla congue, ac ultricies mi
-                    lacinia.
+                    Innovative Chatbot uses Watson Assistant
+                    developed and povided by IBM.
                   </p>
                 </div>
               </div>
@@ -79,13 +74,9 @@ class Landing extends Component {
                   <h5 className="center">Available everywhere</h5>
 
                   <p className="light">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Suspendisse dignissim aliquet interdum. Nunc tempus odio ac
-                    finibus ornare. Class aptent taciti sociosqu ad litora
-                    torquent per conubia nostra, per inceptos himenaeos. Etiam
-                    varius condimentum sapien, eu tempus ante malesuada semper.
-                    Proin rutrum mi luctus nulla congue, ac ultricies mi
-                    lacinia.
+                    Innovative Chatbot is available on all 
+                    Internet-connected devices via browser. Now you
+                    can use our application wherever you want!
                   </p>
                 </div>
               </div>
@@ -98,13 +89,9 @@ class Landing extends Component {
                   <h5 className="center">AI Based</h5>
 
                   <p className="light">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Suspendisse dignissim aliquet interdum. Nunc tempus odio ac
-                    finibus ornare. Class aptent taciti sociosqu ad litora
-                    torquent per conubia nostra, per inceptos himenaeos. Etiam
-                    varius condimentum sapien, eu tempus ante malesuada semper.
-                    Proin rutrum mi luctus nulla congue, ac ultricies mi
-                    lacinia.
+                    Innovative Chatbot uses advanced AI 
+                    algorithms and neural networks to processing
+                    and understanding natural language.
                   </p>
                 </div>
               </div>
