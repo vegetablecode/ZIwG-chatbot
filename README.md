@@ -1,4 +1,4 @@
-# .Chatbot with Watson NLU / NLP
+# ..Chatbot with Watson NLU / NLP
 ## 1. Building images
 ### 1.1. Running all images locally with docker-compose
 ##### build images
