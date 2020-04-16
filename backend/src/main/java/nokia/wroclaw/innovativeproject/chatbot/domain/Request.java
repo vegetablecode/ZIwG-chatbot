@@ -15,10 +15,9 @@ public class Request {
     private Long id;
 
     // request
-    @NotBlank(message = "Question is required.")
-    private String question;
-    private String questionIntent;
-    private double questionConfidence;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "question_id", referencedColumnName = "id")
+    private Question question;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyy HH:mm")
     private Date date;
@@ -47,11 +46,9 @@ public class Request {
 
     }
 
-    public Request(Long id, @NotBlank(message = "Question is required.") String question, String questionIntent, double questionConfidence, Date date, User user, String requestOwner, String responseText, String responseType, String responseRating, Map<String, String> responseParams, String conversationId, String conversationIntent) {
+    public Request(Long id, Question question, Date date, User user, String requestOwner, String responseText, String responseType, String responseRating, Map<String, String> responseParams, String conversationId, String conversationIntent) {
         this.id = id;
         this.question = question;
-        this.questionIntent = questionIntent;
-        this.questionConfidence = questionConfidence;
         this.date = date;
         this.user = user;
         this.requestOwner = requestOwner;
@@ -71,11 +68,11 @@ public class Request {
         this.id = id;
     }
 
-    public String getQuestion() {
+    public Question getQuestion() {
         return question;
     }
 
-    public void setQuestion(String question) {
+    public void setQuestion(Question question) {
         this.question = question;
     }
 
@@ -111,28 +108,12 @@ public class Request {
         this.responseText = responseText;
     }
 
-    public String getConversationId() {
-        return conversationId;
-    }
-
-    public void setConversationId(String conversationId) {
-        this.conversationId = conversationId;
-    }
-
     public String getResponseType() {
         return responseType;
     }
 
     public void setResponseType(String responseType) {
         this.responseType = responseType;
-    }
-
-    public Map<String, String> getResponseParams() {
-        return responseParams;
-    }
-
-    public void setResponseParams(Map<String, String> responseParams) {
-        this.responseParams = responseParams;
     }
 
     public String getResponseRating() {
@@ -143,28 +124,28 @@ public class Request {
         this.responseRating = responseRating;
     }
 
+    public Map<String, String> getResponseParams() {
+        return responseParams;
+    }
+
+    public void setResponseParams(Map<String, String> responseParams) {
+        this.responseParams = responseParams;
+    }
+
+    public String getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(String conversationId) {
+        this.conversationId = conversationId;
+    }
+
     public String getConversationIntent() {
         return conversationIntent;
     }
 
     public void setConversationIntent(String conversationIntent) {
         this.conversationIntent = conversationIntent;
-    }
-
-    public String getQuestionIntent() {
-        return questionIntent;
-    }
-
-    public void setQuestionIntent(String questionIntent) {
-        this.questionIntent = questionIntent;
-    }
-
-    public double getQuestionConfidence() {
-        return questionConfidence;
-    }
-
-    public void setQuestionConfidence(double questionConfidence) {
-        this.questionConfidence = questionConfidence;
     }
 
     @PrePersist

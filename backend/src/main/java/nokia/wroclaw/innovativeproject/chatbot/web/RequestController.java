@@ -7,6 +7,7 @@ import com.ibm.watson.developer_cloud.service.exception.NotFoundException;
 import com.ibm.watson.developer_cloud.service.exception.RequestTooLargeException;
 import com.ibm.watson.developer_cloud.service.exception.ServiceResponseException;
 import com.smattme.MysqlExportService;
+import nokia.wroclaw.innovativeproject.chatbot.domain.Question;
 import nokia.wroclaw.innovativeproject.chatbot.domain.Request;
 import nokia.wroclaw.innovativeproject.chatbot.domain.User;
 import nokia.wroclaw.innovativeproject.chatbot.service.MapValidationErrorService;
@@ -85,7 +86,7 @@ public class RequestController {
         MessageResponse response;
         try {
             // get input data (question)
-            String text = (request.getQuestion() == null) ? "" : request.getQuestion();
+            String text = (request.getQuestion() == null) ? "" : request.getQuestion().getQuery();
             InputData input = new InputData.Builder(text).build();
 
             // get current user and set context
@@ -138,10 +139,12 @@ public class RequestController {
         request.setResponseParams(map);
 
         // set question intent and confidence (one for request)
+        Question question = request.getQuestion();
         if (!response.getIntents().isEmpty()) {
-            request.setQuestionIntent(response.getIntents().get(0).getIntent());
-            request.setQuestionConfidence(response.getIntents().get(0).getConfidence());
-        } else request.setQuestionIntent("");
+            question.setIntent(response.getIntents().get(0).getIntent());
+            question.setConfidence(response.getIntents().get(0).getConfidence());
+        } else question.setIntent("");
+        request.setQuestion(question);
 
         // set conversation intent (one for context)
         String conversationIntent = requestService.getMessageIntent(principal.getName(), conversationContext.getConversationId());
