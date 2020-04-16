@@ -50,9 +50,12 @@ export const addTempRequest = question => async dispatch => {
   // create temp request
   let tempRequest = {
     id: 9999,
-    question: question,
-    questionIntent: "",
-    questionConfidence: 0,
+    question: {
+      id: 9999,
+      query: question,
+      intent: "",
+      confidence: 0
+    },
     date: exactTime,
     requestOwner: "",
     responseText: "",

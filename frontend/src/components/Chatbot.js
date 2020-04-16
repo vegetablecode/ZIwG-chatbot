@@ -1,39 +1,39 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
   getRequests,
   createRequest,
-  addTempRequest
-} from "../actions/requestActions";
-import { logout, getAvatar } from "../actions/securityActions";
-import PropTypes from "prop-types";
-import UserRequest from "./Chatbot/UserRequest";
-import BotResponse from "./Chatbot/BotResponse";
-import IdleTimer from "react-idle-timer";
-import EmptyResponse from "./Chatbot/EmptyResponse";
+  addTempRequest,
+} from '../actions/requestActions';
+import { logout, getAvatar } from '../actions/securityActions';
+import PropTypes from 'prop-types';
+import UserRequest from './Chatbot/UserRequest';
+import BotResponse from './Chatbot/BotResponse';
+import IdleTimer from 'react-idle-timer';
+import EmptyResponse from './Chatbot/EmptyResponse';
 
 class Chatbot extends Component {
   state = {
-    question: "",
-    message: "",
-    getRequestPages: 0
+    question: '',
+    message: '',
+    getRequestPages: 0,
   };
 
-  onIdle = e => {
+  onIdle = (e) => {
     this.props.logout();
-    window.location.href = "/login";
+    window.location.href = '/login';
   };
 
-  getUserRequestsPages = numbOfPages => {
+  getUserRequestsPages = (numbOfPages) => {
     let pages = {
-      page: numbOfPages
+      page: numbOfPages,
     };
     this.props.getRequests(pages);
   };
 
   loadMoreMessagesAction = () => {
     this.setState((prevState, props) => ({
-      getRequestPages: prevState.getRequestPages + 1
+      getRequestPages: prevState.getRequestPages + 1,
     }));
     this.getUserRequestsPages(this.state.getRequestPages + 1);
   };
@@ -43,7 +43,7 @@ class Chatbot extends Component {
     this.nameInput.focus();
     // if not logged in redirect to login page
     if (!this.props.security.validToken) {
-      window.location.href = "/login";
+      window.location.href = '/login';
     }
     // set user avatar (if not set)
     this.props.getAvatar();
@@ -72,17 +72,17 @@ class Chatbot extends Component {
 
   LoadMoreMessages = () => {
     if (this.messageList.scrollTop === 0) {
-      var element = document.getElementById("loader");
-      element.classList.add("spinner");
+      var element = document.getElementById('loader');
+      element.classList.add('spinner');
       this.loadMoreMessagesAction();
-      setTimeout(function() {
-        element.classList.remove("spinner");
+      setTimeout(function () {
+        element.classList.remove('spinner');
       }, 500);
       this.messageList.scrollTop = 1;
     }
   };
 
-  onSubmit = length => e => {
+  onSubmit = (length) => (e) => {
     e.preventDefault();
 
     // save temp question in redux store
@@ -90,23 +90,23 @@ class Chatbot extends Component {
 
     // set default number of pages to 0
     this.setState({
-      getRequestPages: 0
+      getRequestPages: 0,
     });
 
     // get response from backend
     const newRequest = {
-      question: this.state.question
+      question: { query: this.state.question },
     };
     this.props.createRequest(newRequest, this.props.history);
     this.scrollToBottom();
   };
 
-  logout = e => {
+  logout = (e) => {
     this.logout.bind(this);
-    window.location.href = "/";
+    window.location.href = '/';
   };
 
-  onChange = e => {
+  onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
@@ -114,7 +114,7 @@ class Chatbot extends Component {
     const { requests } = this.props.request;
     let length = Object.keys(requests).length;
 
-    let requestList = requests.map(request => (
+    let requestList = requests.map((request) => (
       <div key={request.id}>
         <UserRequest request={request} />
         <BotResponse request={request} />
@@ -122,7 +122,7 @@ class Chatbot extends Component {
     ));
 
     requestList.unshift(
-      <div key="hello">
+      <div key='hello'>
         <EmptyResponse />
       </div>
     );
@@ -130,7 +130,7 @@ class Chatbot extends Component {
     return (
       <div>
         <IdleTimer
-          ref={ref => {
+          ref={(ref) => {
             this.idleTimer = ref;
           }}
           element={document}
@@ -138,15 +138,15 @@ class Chatbot extends Component {
           debounce={250}
           timeout={1000 * 60 * 5}
         />
-        <div className="container">
+        <div className='container'>
           <div
-            className="chat-box grey lighten-2 MessageList"
+            className='chat-box grey lighten-2 MessageList'
             onScroll={this.LoadMoreMessages}
-            ref={div => {
+            ref={(div) => {
               this.messageList = div;
             }}
           >
-            <div id="loader">
+            <div id='loader'>
               <div />
               <div />
               <div />
@@ -155,22 +155,22 @@ class Chatbot extends Component {
             <div>{requestList}</div>
           </div>
           <div>
-            <form onSubmit={this.onSubmit(length)} className="row submit-query">
+            <form onSubmit={this.onSubmit(length)} className='row submit-query'>
               <input
-                ref={input => {
+                ref={(input) => {
                   this.nameInput = input;
                 }}
-                className="col s10"
-                name="question"
-                id="text"
-                type="text"
-                placeholder="Your message"
+                className='col s10'
+                name='question'
+                id='text'
+                type='text'
+                placeholder='Your message'
                 value={this.state.question}
                 onChange={this.onChange}
               />
               <input
-                className="waves-effect waves-light btn-small green darken-2 btn-trial-consultor col s2"
-                type="submit"
+                className='waves-effect waves-light btn-small green darken-2 btn-trial-consultor col s2'
+                type='submit'
               />
             </form>
           </div>
@@ -187,16 +187,19 @@ Chatbot.propTypes = {
   errors: PropTypes.object.isRequired,
   logout: PropTypes.func.isRequired,
   getAvatar: PropTypes.func.isRequired,
-  addTempRequest: PropTypes.func.isRequired
+  addTempRequest: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   request: state.request,
   errors: state.errors,
-  security: state.security
+  security: state.security,
 });
 
-export default connect(
-  mapStateToProps,
-  { getRequests, createRequest, logout, getAvatar, addTempRequest }
-)(Chatbot);
+export default connect(mapStateToProps, {
+  getRequests,
+  createRequest,
+  logout,
+  getAvatar,
+  addTempRequest,
+})(Chatbot);
