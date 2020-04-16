@@ -29,4 +29,4 @@ __Dockerfiles without any extension are for production, dockerfiles *.server* an
 `heroku container:login`  
 `heroku container:push web --app [APP NAME]`  
 `heroku container:release web --app [APP NAME]`  
-`heroku open --app [APP NAME]`  
+`heroku open --app [APP NAME]`  ..
