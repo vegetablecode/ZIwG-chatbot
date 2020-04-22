@@ -14,7 +14,8 @@ class Dashboard extends Component {
     adminAddedResponse: "",
     negativeRatedResponses: [],
     positiveRatedResponses: [],
-    backupFile: ""
+    backupFile: "",
+    isMounted: false
   };
 
   componentDidMount() {
@@ -22,9 +23,10 @@ class Dashboard extends Component {
     axios
       .get(baseUrl + "/api/users/getAllUsernames")
       .then(response => {
+        console.log(response);
         this.setState({ usernames: response.data });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
 
@@ -34,19 +36,25 @@ class Dashboard extends Component {
     axios
       .post(baseUrl + "/api/request/getRatedRequests", posRating)
       .then(response => {
+        console.log(response);
         this.setState({ positiveRatedResponses: response.data });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
     axios
       .post(baseUrl + "/api/request/getRatedRequests", negRating)
       .then(response => {
+        console.log(response);
         this.setState({ negativeRatedResponses: response.data });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error);
       });
+    this.setState({
+      isMounted: true
+    })
+    console.log("mounted")
   }
 
   setSelectedUsername = item => {
@@ -80,7 +88,7 @@ class Dashboard extends Component {
           adminAddedResponse: response.data.status
         });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         this.setState({
           adminAddedResponse: error
         });
@@ -115,7 +123,7 @@ class Dashboard extends Component {
     }
 
     return (
-      <div className="section no-pad-bot" id="index-banner">
+      this.state.isMounted ? <div className="section no-pad-bot" id="index-banner">
         <div className="container">
           <br />
           <br />
@@ -183,8 +191,8 @@ class Dashboard extends Component {
                             <tr key={request.id}>
                               <td>{request.id}</td>
                               <td>{request.requestOwner}</td>
-                              <td>{request.question}</td>
-                              <td>{request.questionIntent}</td>
+                              <td>{request.question.query}</td>
+                              <td>{request.question.intent}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -205,8 +213,8 @@ class Dashboard extends Component {
                             <tr key={request.id}>
                               <td>{request.id}</td>
                               <td>{request.requestOwner}</td>
-                              <td>{request.question}</td>
-                              <td>{request.questionIntent}</td>
+                              <td>{request.question.query}</td>
+                              <td>{request.question.intent}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -218,7 +226,7 @@ class Dashboard extends Component {
             </div>
           </div>
         </div>
-      </div>
+      </div> : <div>loading...</div>
     );
   }
 }

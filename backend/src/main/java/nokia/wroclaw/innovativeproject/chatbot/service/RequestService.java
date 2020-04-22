@@ -1,6 +1,7 @@
 package nokia.wroclaw.innovativeproject.chatbot.service;
 
 import nokia.wroclaw.innovativeproject.chatbot.domain.Request;
+import nokia.wroclaw.innovativeproject.chatbot.domain.Response;
 import nokia.wroclaw.innovativeproject.chatbot.domain.User;
 import nokia.wroclaw.innovativeproject.chatbot.exceptions.request.RequestIdException;
 import nokia.wroclaw.innovativeproject.chatbot.repository.RequestRepository;
@@ -64,7 +65,9 @@ public class RequestService {
         for (Request userRequest : userRequests) {
             if (userRequest.getId().equals(Long.parseLong(rating.get("id")))) {
                 ratedRequest = userRequest;
-                ratedRequest.setResponseRating(rating.get("rating"));
+                Response response = userRequest.getResponse();
+                response.setRating(rating.get("rating"));
+                ratedRequest.setResponse(response);
                 requestRepository.save(ratedRequest);
             }
         }

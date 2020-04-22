@@ -44,7 +44,7 @@ export const addTempRequest = question => async dispatch => {
   var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
   var yyyy = today.getFullYear();
   var curHour = today.getHours();
-	var curMinute = today.getMinutes() < 10 ? "0" + today.getMinutes() : today.getMinutes();
+  var curMinute = today.getMinutes() < 10 ? "0" + today.getMinutes() : today.getMinutes();
   var exactTime = dd + "-" + mm + "-" + yyyy + " " + curHour + ":" + curMinute;
 
   // create temp request
@@ -58,9 +58,11 @@ export const addTempRequest = question => async dispatch => {
     },
     date: exactTime,
     requestOwner: "",
-    responseText: "",
-    responseType: "",
-    responseRating: "0"
+    response: {
+      message: "",
+      type: "",
+      rating: "0"
+    }
   };
 
   dispatch({

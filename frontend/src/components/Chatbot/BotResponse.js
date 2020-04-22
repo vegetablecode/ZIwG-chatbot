@@ -9,7 +9,9 @@ import watsonAvatar from "../../assets/avatars/watson.png";
 
 class BotResponse extends Component {
   state = {
-    responseRating: "",
+    response: {
+      rating: ""
+    },
     classButtonUp: "btn-floating btn blue",
     classButtonDown: "btn-floating btn red"
   };
@@ -36,22 +38,22 @@ class BotResponse extends Component {
     );
 
     const { request } = this.props;
-    const externalAPIResponse = request.responseType ? (
+    const externalAPIResponse = request.response.type ? (
       <ExternalAPIResponse request={request} />
     ) : (
-      ""
-    );
-    const responseText = request.responseText;
+        ""
+      );
+    const responseText = request.response.message;
     const responseDate = request.date;
 
     // like button colors
     let thumbUpClass = "";
     let thumbDownClass = "";
-    if(request.responseRating === "0") {
+    if (request.response.rating === "0") {
       // no rating
       thumbUpClass = "btn-floating btn green";
       thumbDownClass = "btn-floating btn red"
-    } else if (request.responseRating === "1") {
+    } else if (request.response.rating === "1") {
       // thumb up
       thumbUpClass = "btn-floating btn green";
       thumbDownClass = "btn-floating btn grey"
@@ -62,7 +64,7 @@ class BotResponse extends Component {
     }
 
     let data;
-    if (request.responseText === "") {
+    if (request.response.message === "") {
       data = (
         <div>
           <div className="card grey lighten-3 text-wrap chat-left box-shadow">

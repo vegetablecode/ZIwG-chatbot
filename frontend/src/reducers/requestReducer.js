@@ -9,7 +9,7 @@ const initialState = {
   request: {}
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case GET_REQUESTS:
       return {
@@ -22,9 +22,9 @@ export default function(state = initialState, action) {
         requests: state.requests.map(todo =>
           todo.id === action.payload.id
             ? // transform the one with a matching id
-              { ...todo, responseRating: action.payload.responseRating }
+            { ...todo, response: { ...todo.response, rating: action.payload.response.rating } }
             : // otherwise return original todo
-              todo
+            todo
         )
       };
     case APPEND_TEMP_REQUEST:
