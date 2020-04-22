@@ -9,6 +9,7 @@ import com.ibm.watson.developer_cloud.service.exception.ServiceResponseException
 import com.smattme.MysqlExportService;
 import nokia.wroclaw.innovativeproject.chatbot.domain.Question;
 import nokia.wroclaw.innovativeproject.chatbot.domain.Request;
+import nokia.wroclaw.innovativeproject.chatbot.domain.Response;
 import nokia.wroclaw.innovativeproject.chatbot.domain.User;
 import nokia.wroclaw.innovativeproject.chatbot.service.MapValidationErrorService;
 import nokia.wroclaw.innovativeproject.chatbot.service.RequestService;
@@ -107,7 +108,9 @@ public class RequestController {
 
             // add the response to the current request
             String data = response.getOutput().getText().toString();
-            request.setResponseText(data.substring(1, data.length() - 1)); // text
+            Response res = new Response();
+            res.setMessage(data.substring(1, data.length() - 1)); // text
+            request.setResponse(res);
             request.setConversationId(conversationContext.getConversationId()); // conversation ID
             userService.updateCurrentConversationId(principal.getName(), conversationContext.getConversationId());
 
@@ -136,7 +139,9 @@ public class RequestController {
                 map.put(entry.getKey(), entry.getValue().toString());
             }
         }
-        request.setResponseParams(map);
+        Response res = request.getResponse();
+        res.setParams(map);
+        request.setResponse(res);
 
         // set question intent and confidence (one for request)
         Question question = request.getQuestion();
@@ -158,16 +163,22 @@ public class RequestController {
 
         // get response type (if node exited)
         if (response.getContext().getSystem().containsKey("branch_exited")) {
-            request.setResponseType(request.getConversationIntent());
+            Response r = request.getResponse();
+            r.setType(request.getConversationIntent());
+            request.setResponse(r);
             if (request.getConversationIntent().equals("Send_opinion")) {
                 userService.sendMessage(principal.getName(), response.getInput().getText());
             }
         } else {
-            request.setResponseType("");
+            Response r = request.getResponse();
+            r.setType("");
+            request.setResponse(r);
         }
 
         // no rating yet
-        request.setResponseRating("0");
+        Response r = request.getResponse();
+        r.setRating("0");
+        request.setResponse(r);
 
         // save request
         Request request1 = requestService.saveOrUpdateRequest(request, principal.getName());

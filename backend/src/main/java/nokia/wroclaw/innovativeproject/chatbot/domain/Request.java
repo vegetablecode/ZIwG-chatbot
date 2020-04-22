@@ -28,15 +28,9 @@ public class Request {
 
     private String requestOwner;
 
-    // response
-    private String responseText;
-    private String responseType; // "" means text
-    private String responseRating;
-
-    @ElementCollection
-    @CollectionTable(name="RESPONSE_PARAMS")
-    @MapKeyColumn(name="PARAMS")
-    private Map<String, String> responseParams = new HashMap<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "response_id", referencedColumnName = "id")
+    private Response response;
 
     // conversation
     private String conversationId;
@@ -46,16 +40,13 @@ public class Request {
 
     }
 
-    public Request(Long id, Question question, Date date, User user, String requestOwner, String responseText, String responseType, String responseRating, Map<String, String> responseParams, String conversationId, String conversationIntent) {
+    public Request(Long id, Question question, Date date, User user, String requestOwner, Response response, String conversationId, String conversationIntent) {
         this.id = id;
         this.question = question;
         this.date = date;
         this.user = user;
         this.requestOwner = requestOwner;
-        this.responseText = responseText;
-        this.responseType = responseType;
-        this.responseRating = responseRating;
-        this.responseParams = responseParams;
+        this.response = response;
         this.conversationId = conversationId;
         this.conversationIntent = conversationIntent;
     }
@@ -100,38 +91,6 @@ public class Request {
         this.requestOwner = requestOwner;
     }
 
-    public String getResponseText() {
-        return responseText;
-    }
-
-    public void setResponseText(String responseText) {
-        this.responseText = responseText;
-    }
-
-    public String getResponseType() {
-        return responseType;
-    }
-
-    public void setResponseType(String responseType) {
-        this.responseType = responseType;
-    }
-
-    public String getResponseRating() {
-        return responseRating;
-    }
-
-    public void setResponseRating(String responseRating) {
-        this.responseRating = responseRating;
-    }
-
-    public Map<String, String> getResponseParams() {
-        return responseParams;
-    }
-
-    public void setResponseParams(Map<String, String> responseParams) {
-        this.responseParams = responseParams;
-    }
-
     public String getConversationId() {
         return conversationId;
     }
@@ -146,6 +105,14 @@ public class Request {
 
     public void setConversationIntent(String conversationIntent) {
         this.conversationIntent = conversationIntent;
+    }
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
     }
 
     @PrePersist

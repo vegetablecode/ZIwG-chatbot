@@ -9,22 +9,22 @@ class ExternalAPIResponse extends Component {
     const { request } = this.props;
     var displayedComponent = "";
 
-    switch (request.responseType) {
+    switch (request.response.type) {
       case "General_Weather":
         displayedComponent = (
-          <ForecastComponent params={request.responseParams} />
+          <ForecastComponent params={request.response.params} />
         );
         break;
 
       case "Memes":
-        displayedComponent = <MemeComponent params={request.responseParams} />;
+        displayedComponent = <MemeComponent params={request.response.params} />;
         break;
 
       case "QRcode":
-        displayedComponent = <QRCodeComponent params={request.responseParams} />
+        displayedComponent = <QRCodeComponent params={request.response.params} />
         break;
       case "Bitcoin":
-          displayedComponent = <BtcPriceComponent params={request.responseParams} />
+          displayedComponent = <BtcPriceComponent params={request.response.params} />
           break;
 
       default:
