@@ -7,6 +7,7 @@ import com.ibm.watson.developer_cloud.service.exception.RequestTooLargeException
 import com.ibm.watson.developer_cloud.service.exception.ServiceResponseException;
 import com.smattme.MysqlExportService;
 import pwr.inf.ziwg.chatbot.domain.*;
+import pwr.inf.ziwg.chatbot.service.DocumentService;
 import pwr.inf.ziwg.chatbot.service.MapValidationErrorService;
 import pwr.inf.ziwg.chatbot.service.RequestService;
 import pwr.inf.ziwg.chatbot.service.UserService;
@@ -53,6 +54,9 @@ public class RequestController {
     private UserService userService;
 
     @Autowired
+    private DocumentService documentService;
+
+    @Autowired
     private MapValidationErrorService mapValidationErrorService;
 
     private Assistant service;
@@ -89,6 +93,9 @@ public class RequestController {
             // get current user and set context
             User currentUser = userService.getUser(principal.getName());
             conversationContext = (contextMap.get(currentUser.getCurrentConversationId()) == null) ? new Context() : contextMap.get(currentUser.getCurrentConversationId());
+
+            // check for document
+            //System.out.println("Checking for document: " + documentService.getDocumentType(text).getKeywords());
 
             // message builder
             MessageOptions options =
