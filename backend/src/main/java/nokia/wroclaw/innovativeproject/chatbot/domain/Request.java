@@ -32,23 +32,22 @@ public class Request {
     @JoinColumn(name = "response_id", referencedColumnName = "id")
     private Response response;
 
-    // conversation
-    private String conversationId;
-    private String conversationIntent;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "conversation_id", referencedColumnName = "id")
+    private Conversation conversation;
 
     public Request() {
 
     }
 
-    public Request(Long id, Question question, Date date, User user, String requestOwner, Response response, String conversationId, String conversationIntent) {
+    public Request(Long id, Question question, Date date, User user, String requestOwner, Response response, Conversation conversation) {
         this.id = id;
         this.question = question;
         this.date = date;
         this.user = user;
         this.requestOwner = requestOwner;
         this.response = response;
-        this.conversationId = conversationId;
-        this.conversationIntent = conversationIntent;
+        this.conversation = conversation;
     }
 
     public Long getId() {
@@ -91,24 +90,16 @@ public class Request {
         this.requestOwner = requestOwner;
     }
 
-    public String getConversationId() {
-        return conversationId;
-    }
-
-    public void setConversationId(String conversationId) {
-        this.conversationId = conversationId;
-    }
-
-    public String getConversationIntent() {
-        return conversationIntent;
-    }
-
-    public void setConversationIntent(String conversationIntent) {
-        this.conversationIntent = conversationIntent;
-    }
-
     public Response getResponse() {
         return response;
+    }
+
+    public Conversation getConversation() {
+        return conversation;
+    }
+
+    public void setConversation(Conversation conversation) {
+        this.conversation = conversation;
     }
 
     public void setResponse(Response response) {

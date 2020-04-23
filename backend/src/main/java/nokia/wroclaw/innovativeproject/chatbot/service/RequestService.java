@@ -53,8 +53,8 @@ public class RequestService {
     public String getMessageIntent(String username, String conversationId) {
         Iterable<Request> userRequests = findAllUserRequests(username);
         for (Request userRequest : userRequests) {
-            if ((userRequest.getConversationId().equals(conversationId)) && (!userRequest.getConversationIntent().equals("")))
-                return userRequest.getConversationIntent();
+            if ((userRequest.getConversation().getWatsonId().equals(conversationId)) && (!userRequest.getConversation().getIntent().equals("")))
+                return userRequest.getConversation().getIntent();
         }
         return "";
     }

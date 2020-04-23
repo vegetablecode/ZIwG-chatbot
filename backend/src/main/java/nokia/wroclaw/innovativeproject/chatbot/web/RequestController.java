@@ -7,10 +7,7 @@ import com.ibm.watson.developer_cloud.service.exception.NotFoundException;
 import com.ibm.watson.developer_cloud.service.exception.RequestTooLargeException;
 import com.ibm.watson.developer_cloud.service.exception.ServiceResponseException;
 import com.smattme.MysqlExportService;
-import nokia.wroclaw.innovativeproject.chatbot.domain.Question;
-import nokia.wroclaw.innovativeproject.chatbot.domain.Request;
-import nokia.wroclaw.innovativeproject.chatbot.domain.Response;
-import nokia.wroclaw.innovativeproject.chatbot.domain.User;
+import nokia.wroclaw.innovativeproject.chatbot.domain.*;
 import nokia.wroclaw.innovativeproject.chatbot.service.MapValidationErrorService;
 import nokia.wroclaw.innovativeproject.chatbot.service.RequestService;
 import nokia.wroclaw.innovativeproject.chatbot.service.UserService;
@@ -111,7 +108,9 @@ public class RequestController {
             Response res = new Response();
             res.setMessage(data.substring(1, data.length() - 1)); // text
             request.setResponse(res);
-            request.setConversationId(conversationContext.getConversationId()); // conversation ID
+            Conversation conversation = new Conversation();
+            conversation.setWatsonId(conversationContext.getConversationId()); // conversation ID
+            request.setConversation(conversation);
             userService.updateCurrentConversationId(principal.getName(), conversationContext.getConversationId());
 
             // save context to context map
@@ -153,20 +152,22 @@ public class RequestController {
 
         // set conversation intent (one for context)
         String conversationIntent = requestService.getMessageIntent(principal.getName(), conversationContext.getConversationId());
+        Conversation currentConversation = request.getConversation();
         if (!conversationIntent.equals("")) // if this conversation had an intent
-            request.setConversationIntent(conversationIntent); // set this intent on request
+            currentConversation.setIntent(conversationIntent); // set this intent on request
         else { // if not
             if (!response.getIntents().isEmpty()) // if there is intent in current response
-                request.setConversationIntent(response.getIntents().get(0).getIntent());
-            else request.setConversationIntent(conversationIntent);
+                currentConversation.setIntent(response.getIntents().get(0).getIntent());
+            else currentConversation.setIntent(conversationIntent);
         }
+        request.setConversation(currentConversation);
 
         // get response type (if node exited)
         if (response.getContext().getSystem().containsKey("branch_exited")) {
             Response r = request.getResponse();
-            r.setType(request.getConversationIntent());
+            r.setType(request.getConversation().getIntent());
             request.setResponse(r);
-            if (request.getConversationIntent().equals("Send_opinion")) {
+            if (request.getConversation().getIntent().equals("Send_opinion")) {
                 userService.sendMessage(principal.getName(), response.getInput().getText());
             }
         } else {
