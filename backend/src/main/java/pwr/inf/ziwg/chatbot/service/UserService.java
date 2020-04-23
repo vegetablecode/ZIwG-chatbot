@@ -141,12 +141,18 @@ public class UserService {
         }
 
         currentUser.setLastMessageId(lastMessageId);
+        currentUser.setCurrentConversationId(null);
         userRepository.save(currentUser);
 
         Map<String, String> map = new HashMap<>();
         map.put("status", "Conversation has been cleared");
         map.put("id", lastMessageId.toString());
         return map;
+    }
+
+    public void exitCurrentNode(User currentUser) {
+        currentUser.setCurrentConversationId(null);
+        userRepository.save(currentUser);
     }
 
     public void sendMessage(String user, String text) {
