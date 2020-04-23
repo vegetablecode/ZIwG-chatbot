@@ -22,8 +22,9 @@ public class Response {
     private Request request;
 
     @ElementCollection
-    @CollectionTable(name = "RESPONSE_PARAMS")
-    @MapKeyColumn(name = "parameters")
+    @CollectionTable(name = "PARAMETERS")
+    @MapKeyColumn(name = "type")
+    @Column(name = "name")
     private Map<String, String> params = new HashMap<>();
 
     public Response() {

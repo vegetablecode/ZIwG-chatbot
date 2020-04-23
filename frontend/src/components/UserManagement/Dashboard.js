@@ -214,7 +214,7 @@ class Dashboard extends Component {
                               <td>{request.id}</td>
                               <td>{request.requestOwner}</td>
                               <td>{request.question.query}</td>
-                              <td>{request.question.intent}</td>
+                              <td>{request.conversation.intent}</td>
                             </tr>
                           ))}
                         </tbody>
