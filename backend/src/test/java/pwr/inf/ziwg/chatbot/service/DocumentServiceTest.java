@@ -29,10 +29,10 @@ public class DocumentServiceTest {
     @Before
     public void setUp() {
         documentListMock = new ArrayList<>();
-        documentListMock.add(new Document(0L, "free conference rooms room"));
-        documentListMock.add(new Document(1L, "calendar today"));
-        documentListMock.add(new Document(2L, "free rooms studio"));
-        documentListMock.add(new Document(3L, "price petrol"));
+        documentListMock.add(new Document(0L, "free conference rooms room", null));
+        documentListMock.add(new Document(1L, "calendar today", null));
+        documentListMock.add(new Document(2L, "free rooms studio", null));
+        documentListMock.add(new Document(3L, "price petrol", null));
 
         Mockito.when(repository.findAll()).thenReturn(documentListMock);
 
