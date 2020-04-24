@@ -90,11 +90,20 @@ public class RequestController {
             String text = (request.getQuestion() == null) ? "" : request.getQuestion().getQuery();
             InputData input = new InputData.Builder(text).build();
 
-            // get current user and set context
             User currentUser = userService.getUser(principal.getName());
+
+            // check for document (only if outside a node)
+            if(contextMap.get(currentUser.getCurrentConversationId()) == null) {
+                if(documentService.getDocumentType(text).isPresent()) {
+                    // document found - redirect message
+                    input = new InputData.Builder("Generic question").build();
+                    //System.out.println(documentService.getDocumentType(text).get());
+                }
+            }
+
+            // get current user and set context
             conversationContext = (contextMap.get(currentUser.getCurrentConversationId()) == null) ? new Context() : contextMap.get(currentUser.getCurrentConversationId());
 
-            // check for document
             //System.out.println("Checking for document: " + documentService.getDocumentType(text).getKeywords());
 
             // message builder
@@ -123,7 +132,7 @@ public class RequestController {
             if (!response.getContext().getSystem().containsKey("branch_exited")) {
                 contextMap.put(conversationContext.getConversationId(), conversationContext);
             } else {
-                contextMap.put(conversationContext.getConversationId(), new Context());
+                contextMap.put(conversationContext.getConversationId(), null);
             }
 
         } catch (NotFoundException e) {
