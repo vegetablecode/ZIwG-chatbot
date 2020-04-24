@@ -18,33 +18,33 @@ public class DocumentService {
         return document;
     }
 
-    public Document getDocumentType(String query) {
+    public Optional<Document> getDocumentType(String query) {
         List<Document> documentList = new ArrayList<>();
         repository.findAll().forEach(documentList::add);
 
         Optional<Document> match = documentList.stream()
                 .filter(document -> getNumbOfCommonElements(document.getKeywords(), query) > 1)
-                .sorted(Comparator.comparingInt(document -> getNumbOfCommonElements(document.getKeywords(), query)))
+                .sorted((o1, o2) -> getNumbOfCommonElements(o2.getKeywords(), query)
+                        -(getNumbOfCommonElements(o1.getKeywords(), query)))
                 .findFirst();
 
-        return match.isPresent() ? match.get() : null;
+        return match;
     }
 
     private int getNumbOfCommonElements(String s1, String s2) {
         String[] c = s1.toLowerCase().split(" ");
         String[] d = s2.toLowerCase().split(" ");
-
-        Set<String> hset = new LinkedHashSet<>();
+        int counter = 0;
 
         for (int i = 0; i < c.length; i++) {
             for (int j = 0; j < d.length; j++) {
-                if (c[i] == d[j]) {
-                    hset.add(c[i]);
+                if (c[i].equals(d[j])) {
+                    counter++;
                 }
             }
         }
 
-        return hset.size();
+        return counter;
     }
 
 }
