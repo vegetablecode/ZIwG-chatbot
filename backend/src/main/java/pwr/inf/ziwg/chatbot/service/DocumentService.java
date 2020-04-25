@@ -47,4 +47,7 @@ public class DocumentService {
         return counter;
     }
 
+    public String mapResponse(String prevMessage) {
+        return "";
+    }
 }

@@ -31,7 +31,7 @@ public class Request {
     @JoinColumn(name = "response_id", referencedColumnName = "id")
     private Response response;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "conversation_id", referencedColumnName = "id")
     private Conversation conversation;
 

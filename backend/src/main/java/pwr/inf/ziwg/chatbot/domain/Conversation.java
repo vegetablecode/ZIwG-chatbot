@@ -3,6 +3,8 @@ package pwr.inf.ziwg.chatbot.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Conversation {
@@ -11,9 +13,9 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "conversation")
+    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "conversation", orphanRemoval = true)
     @JsonIgnore
-    private Request request;
+    private List<Request> requests = new ArrayList<>();
 
     private String watsonId;
     private String intent;
@@ -22,9 +24,9 @@ public class Conversation {
 
     }
 
-    public Conversation(Long id, Request request, String watsonId, String intent) {
+    public Conversation(Long id, List<Request> requests, String watsonId, String intent) {
         this.id = id;
-        this.request = request;
+        this.requests = requests;
         this.watsonId = watsonId;
         this.intent = intent;
     }
@@ -37,12 +39,12 @@ public class Conversation {
         this.id = id;
     }
 
-    public Request getRequest() {
-        return request;
+    public List<Request> getRequests() {
+        return requests;
     }
 
-    public void setRequest(Request request) {
-        this.request = request;
+    public void setRequests(List<Request> requests) {
+        this.requests = requests;
     }
 
     public String getWatsonId() {
@@ -60,4 +62,5 @@ public class Conversation {
     public void setIntent(String intent) {
         this.intent = intent;
     }
+
 }

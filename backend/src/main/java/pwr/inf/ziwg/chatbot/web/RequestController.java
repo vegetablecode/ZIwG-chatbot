@@ -120,10 +120,13 @@ public class RequestController {
 
             // add the response to the current request
             String data = response.getOutput().getText().toString();
+
             Response res = new Response();
             res.setMessage(data.substring(1, data.length() - 1)); // text
             request.setResponse(res);
-            Conversation conversation = new Conversation();
+
+            Conversation conversation = requestService.getCurrentConversation(conversationContext.getConversationId());
+
             conversation.setWatsonId(conversationContext.getConversationId()); // conversation ID
             request.setConversation(conversation);
             userService.updateCurrentConversationId(principal.getName(), conversationContext.getConversationId());
@@ -195,6 +198,13 @@ public class RequestController {
         Response r = request.getResponse();
         r.setRating("0");
         request.setResponse(r);
+
+        // if it's inside document node - catch
+        if(request.getConversation().getIntent().equals("Generic_question")) {
+            Response documentResponse = request.getResponse();
+            String prevMessage = documentResponse.getMessage();
+            documentResponse.setMessage(documentService.mapResponse(prevMessage));
+        }
 
         // save request
         Request request1 = requestService.saveOrUpdateRequest(request, principal.getName());

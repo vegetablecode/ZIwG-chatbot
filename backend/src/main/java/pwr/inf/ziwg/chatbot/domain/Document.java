@@ -50,4 +50,5 @@ public class Document {
     public void setParams(List<DocumentParameter> params) {
         this.params = params;
     }
+
 }
