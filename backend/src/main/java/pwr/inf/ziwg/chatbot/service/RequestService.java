@@ -1,9 +1,11 @@
 package pwr.inf.ziwg.chatbot.service;
 
+import pwr.inf.ziwg.chatbot.domain.Conversation;
 import pwr.inf.ziwg.chatbot.domain.Request;
 import pwr.inf.ziwg.chatbot.domain.Response;
 import pwr.inf.ziwg.chatbot.domain.User;
 import pwr.inf.ziwg.chatbot.exceptions.request.RequestIdException;
+import pwr.inf.ziwg.chatbot.repository.ConversationRepository;
 import pwr.inf.ziwg.chatbot.repository.RequestRepository;
 import pwr.inf.ziwg.chatbot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class RequestService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ConversationRepository conversationRepository;
 
     public Request saveOrUpdateRequest(Request request, String username) {
         try {
@@ -118,5 +123,13 @@ public class RequestService {
         long diff = now.getTime() - lastRequestDate.getTime();
         days = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
         return days;
+    }
+
+    public Conversation getCurrentConversation(String conversationId) {
+        Conversation conversation = null;
+        if(!conversationId.isEmpty()) {
+            conversation = conversationRepository.findByWatsonId(conversationId);
+        }
+        return conversation == null ? new Conversation() : conversation;
     }
 }
