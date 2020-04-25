@@ -85,6 +85,8 @@ public class RequestController {
         // get answer
         Context conversationContext;
         MessageResponse response;
+        Document currentDocument = null;
+
         try {
             // get input data (question)
             String text = (request.getQuestion() == null) ? "" : request.getQuestion().getQuery();
@@ -97,7 +99,7 @@ public class RequestController {
                 if(documentService.getDocumentType(text).isPresent()) {
                     // document found - redirect message
                     input = new InputData.Builder("Generic question").build();
-                    //System.out.println(documentService.getDocumentType(text).get());
+                    currentDocument = documentService.getDocumentType(text).get();
                 }
             }
 
@@ -126,7 +128,8 @@ public class RequestController {
             request.setResponse(res);
 
             Conversation conversation = requestService.getCurrentConversation(conversationContext.getConversationId());
-
+            if(currentDocument != null)
+                conversation.setDocument(currentDocument);
             conversation.setWatsonId(conversationContext.getConversationId()); // conversation ID
             request.setConversation(conversation);
             userService.updateCurrentConversationId(principal.getName(), conversationContext.getConversationId());
@@ -203,7 +206,13 @@ public class RequestController {
         if(request.getConversation().getIntent().equals("Generic_question")) {
             Response documentResponse = request.getResponse();
             String prevMessage = documentResponse.getMessage();
-            documentResponse.setMessage(documentService.mapResponse(prevMessage));
+            String convertedMessage = documentService.mapResponse(prevMessage, request.getConversation().getDocument());
+            documentResponse.setMessage(convertedMessage);
+
+            if(convertedMessage.isEmpty()) {
+                // all parameters collected - get the document
+                System.out.println("get the document");
+            }
         }
 
         // save request

@@ -33,6 +33,7 @@ public class DocumentServiceTest {
         documentListMock.add(new Document(1L, "calendar today", null));
         documentListMock.add(new Document(2L, "free rooms studio", null));
         documentListMock.add(new Document(3L, "price petrol", null));
+        documentListMock.add(new Document(3L, "price petrol", null));
 
         Mockito.when(repository.findAll()).thenReturn(documentListMock);
 

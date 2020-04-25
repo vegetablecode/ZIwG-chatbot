@@ -16,7 +16,8 @@ public class DocumentParameter {
     private String type;
     private String regex;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
+    @JoinColumn(name = "document_id")
     @JsonIgnore
     private Document document;
 

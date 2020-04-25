@@ -13,22 +13,22 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "conversation", orphanRemoval = true)
-    @JsonIgnore
-    private List<Request> requests = new ArrayList<>();
-
     private String watsonId;
     private String intent;
+
+    @ManyToOne
+    @JoinColumn(name = "document_id")
+    private Document document;
 
     public Conversation() {
 
     }
 
-    public Conversation(Long id, List<Request> requests, String watsonId, String intent) {
+    public Conversation(Long id, String watsonId, String intent, Document document) {
         this.id = id;
-        this.requests = requests;
         this.watsonId = watsonId;
         this.intent = intent;
+        this.document = document;
     }
 
     public Long getId() {
@@ -37,14 +37,6 @@ public class Conversation {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public List<Request> getRequests() {
-        return requests;
-    }
-
-    public void setRequests(List<Request> requests) {
-        this.requests = requests;
     }
 
     public String getWatsonId() {
@@ -63,4 +55,11 @@ public class Conversation {
         this.intent = intent;
     }
 
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
 }

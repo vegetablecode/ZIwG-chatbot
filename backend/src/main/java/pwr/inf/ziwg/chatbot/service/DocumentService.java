@@ -3,9 +3,12 @@ package pwr.inf.ziwg.chatbot.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pwr.inf.ziwg.chatbot.domain.Document;
+import pwr.inf.ziwg.chatbot.domain.DocumentParameter;
+import pwr.inf.ziwg.chatbot.repository.DocumentParameterRepository;
 import pwr.inf.ziwg.chatbot.repository.DocumentRepository;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 @Service
 public class DocumentService {
@@ -13,8 +16,15 @@ public class DocumentService {
     @Autowired
     private DocumentRepository repository;
 
+    @Autowired
+    private DocumentParameterRepository documentParameterRepository;
+
     public Document addNewDocument(Document document) {
-        repository.save(document);
+        Document savedDocument = repository.save(document);
+        for(DocumentParameter p : document.getParams()) {
+            p.setDocument(savedDocument);
+            documentParameterRepository.save(p);
+        }
         return document;
     }
 
@@ -47,7 +57,21 @@ public class DocumentService {
         return counter;
     }
 
-    public String mapResponse(String prevMessage) {
+    public String mapResponse(String prevMessage, Document document) {
+        Map<String, String> params = new HashMap<>();
+
+        if(!document.getParams().isEmpty()) {
+            IntStream.range(0, document.getParams().size()).forEach(idx ->
+                    params.put("{{param" + (idx + 1) + "}}", document.getParams().get(idx).getLabel()
+                    ));
+            for (String key : params.keySet()) {
+                System.out.println(key);
+                if (prevMessage.contains(key)) {
+                    return prevMessage.replace(key, params.get(key));
+                }
+            }
+        }
+
         return "";
     }
 }
