@@ -2,9 +2,7 @@ package pwr.inf.ziwg.chatbot.domain;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 public class Document {
@@ -15,15 +13,8 @@ public class Document {
 
     private String keywords;
 
-    //@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "document", orphanRemoval = true)
-    //private List<DocumentParameter> params = new ArrayList<>();
-
     @OneToMany(targetEntity = DocumentParameter.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DocumentParameter> params = new ArrayList<>();
-
-    //@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "document", orphanRemoval = true)
-    //private List<Conversation> conversations = new ArrayList<>();
-
 
     public Document() {
     }

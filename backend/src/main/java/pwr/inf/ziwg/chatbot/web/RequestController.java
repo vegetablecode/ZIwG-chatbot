@@ -211,7 +211,12 @@ public class RequestController {
 
             if(convertedMessage.isEmpty()) {
                 // all parameters collected - get the document
-                System.out.println("get the document");
+                Response prevRes = request.getResponse();
+                prevRes.setMessage(documentService.getDocument(request));
+                request.setResponse(prevRes);
+
+                // new context
+                contextMap.put(conversationContext.getConversationId(), null);
             }
         }
 
