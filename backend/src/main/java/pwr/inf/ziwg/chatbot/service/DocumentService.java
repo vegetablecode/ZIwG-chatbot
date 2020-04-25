@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pwr.inf.ziwg.chatbot.domain.Document;
 import pwr.inf.ziwg.chatbot.domain.DocumentParameter;
+import pwr.inf.ziwg.chatbot.domain.Request;
 import pwr.inf.ziwg.chatbot.repository.DocumentParameterRepository;
 import pwr.inf.ziwg.chatbot.repository.DocumentRepository;
 
@@ -65,7 +66,6 @@ public class DocumentService {
                     params.put("{{param" + (idx + 1) + "}}", document.getParams().get(idx).getLabel()
                     ));
             for (String key : params.keySet()) {
-                System.out.println(key);
                 if (prevMessage.contains(key)) {
                     return prevMessage.replace(key, params.get(key));
                 }
@@ -73,5 +73,9 @@ public class DocumentService {
         }
 
         return "";
+    }
+
+    public String getDocument(Request request) {
+        return "im here";
     }
 }
