@@ -15,8 +15,15 @@ public class Document {
 
     private String keywords;
 
-    @OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "document", orphanRemoval = true)
+    //@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, mappedBy = "document", orphanRemoval = true)
+    //private List<DocumentParameter> params = new ArrayList<>();
+
+    @OneToMany(targetEntity = DocumentParameter.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DocumentParameter> params = new ArrayList<>();
+
+    //@OneToMany(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER, mappedBy = "document", orphanRemoval = true)
+    //private List<Conversation> conversations = new ArrayList<>();
+
 
     public Document() {
     }
@@ -50,5 +57,6 @@ public class Document {
     public void setParams(List<DocumentParameter> params) {
         this.params = params;
     }
+
 
 }
