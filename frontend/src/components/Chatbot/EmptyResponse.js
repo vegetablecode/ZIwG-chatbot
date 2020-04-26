@@ -15,7 +15,7 @@ class EmptyResponse extends Component {
         <div className="card grey lighten-3 text-wrap chat-left box-shadow">
           {avatar}
           <div className="message-text">
-            Welcome to the Innovative Chatbot!
+            Welcome to the Chatbot!
           </div>
         </div>
       </div>

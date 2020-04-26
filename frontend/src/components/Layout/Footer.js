@@ -7,7 +7,7 @@ class Footer extends Component {
         <div className="container">
           <div className="row">
             <div className="col l6 s12">
-              <h5 className="black-text">Innovative Chatbot</h5>
+              <h5 className="black-text">ZIwG Chatbot</h5>
               <p className="grey-text text-darken-3">
                 The goal of the project is to create interface to available IBM
                 Watson Assitance instance. Deliver chatbot with below aspects
@@ -32,7 +32,7 @@ class Footer extends Component {
                 <li>
                   <a
                     className="blue-text text-darken-4"
-                    href="https://github.com/nokia-wroclaw/innovativeproject-chatbot"
+                    href=""
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -42,11 +42,11 @@ class Footer extends Component {
                 <li>
                   <a
                     className="blue-text text-darken-4"
-                    href="https://nokiawroclaw.pl"
+                    href=""
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Nokia Wrocław
+                    Course Sheets
                   </a>
                 </li>
               </ul>
@@ -55,14 +55,14 @@ class Footer extends Component {
         </div>
         <div className="footer-copyright">
           <div className="container black-text">
-            Chatbot by{" "}
+            ZIwG Chatbot {" "}
             <a
               className="blue-text text-darken-4"
-              href="https://github.com/nokia-wroclaw"
+              href=""
               target="_blank"
               rel="noopener noreferrer"
             >
-              Innovative Projects
+              @2020
             </a>
           </div>
         </div>

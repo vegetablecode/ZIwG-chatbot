@@ -155,7 +155,7 @@ class Navbar extends Component {
         <nav className="nav-wrapper blue darken-4">
           <div className="container">
             <NavLink to="/" className="brand-logo left">
-            Innovative Chatbot
+            ZIwG Chatbot
             </NavLink>
             {headerLinks}
           </div>
