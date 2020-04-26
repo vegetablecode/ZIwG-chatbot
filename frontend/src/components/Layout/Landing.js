@@ -11,11 +11,11 @@ class Landing extends Component {
             <br />
             <br />
             <h1 className="header center blue-text text-darken-4">
-              Innovative Chatbot
+              ZIwG Chatbot
             </h1>
             <div className="row center">
               <h5 className="header col s12 light">
-                Innovative Projects. A modern chatbot with IMB Watson.
+                A modern chatbot based on IBM Watson.
               </h5>
             </div>
             <div className="container">
@@ -60,8 +60,8 @@ class Landing extends Component {
                   <h5 className="center">Based on IBM Watson</h5>
 
                   <p className="light">
-                    Innovative Chatbot uses Watson Assistant
-                    developed and povided by IBM.
+                    ZIwG Chatbot uses Watson Assistant
+                    developed and provided by IBM.
                   </p>
                 </div>
               </div>
@@ -74,7 +74,7 @@ class Landing extends Component {
                   <h5 className="center">Available everywhere</h5>
 
                   <p className="light">
-                    Innovative Chatbot is available on all 
+                    ZIwG Chatbot is available on all
                     Internet-connected devices via browser. Now you
                     can use our application wherever you want!
                   </p>
@@ -89,7 +89,7 @@ class Landing extends Component {
                   <h5 className="center">AI Based</h5>
 
                   <p className="light">
-                    Innovative Chatbot uses advanced AI 
+                    ZIwG Chatbot uses advanced AI
                     algorithms and neural networks to processing
                     and understanding natural language.
                   </p>
