@@ -16,13 +16,30 @@ public class Document {
     @OneToMany(targetEntity = DocumentParameter.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DocumentParameter> params = new ArrayList<>();
 
+    @OneToMany(targetEntity = Header.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Header>  headers = new ArrayList<>();
+
+    private String type;
+
+    // API
+    private String endpoint;
+    private String method;
+    private String body;
+    private String template;
+
     public Document() {
     }
 
-    public Document(Long id, String keywords, List<DocumentParameter> params) {
+    public Document(Long id, String keywords, List<DocumentParameter> params, List<Header> headers, String type, String endpoint, String method, String body, String template) {
         this.id = id;
         this.keywords = keywords;
         this.params = params;
+        this.headers = headers;
+        this.type = type;
+        this.endpoint = endpoint;
+        this.method = method;
+        this.body = body;
+        this.template = template;
     }
 
     public Long getId() {
@@ -49,5 +66,51 @@ public class Document {
         this.params = params;
     }
 
+    public String getType() {
+        return type;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
+    }
+
+    public List<Header> getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(List<Header> headers) {
+        this.headers = headers;
+    }
 }
