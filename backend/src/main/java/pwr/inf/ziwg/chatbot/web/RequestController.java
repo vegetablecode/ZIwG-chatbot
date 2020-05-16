@@ -5,6 +5,7 @@ import com.ibm.watson.developer_cloud.assistant.v1.model.*;
 import com.ibm.watson.developer_cloud.service.exception.NotFoundException;
 import com.ibm.watson.developer_cloud.service.exception.RequestTooLargeException;
 import com.ibm.watson.developer_cloud.service.exception.ServiceResponseException;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import com.smattme.MysqlExportService;
 import pwr.inf.ziwg.chatbot.domain.*;
 import pwr.inf.ziwg.chatbot.service.DocumentService;
@@ -74,7 +75,7 @@ public class RequestController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> askChatbot(@Valid @RequestBody Request request, BindingResult result, Principal principal) throws IOException, SQLException, ClassNotFoundException {
+    public ResponseEntity<?> askChatbot(@Valid @RequestBody Request request, BindingResult result, Principal principal) throws IOException, SQLException, ClassNotFoundException, UnirestException {
         // check for errors
         ResponseEntity<?> errorMap = mapValidationErrorService.MapValidationService(result);
         if (errorMap != null) return errorMap;
