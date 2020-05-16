@@ -148,7 +148,14 @@ public class DocumentService {
     }
 
     private String getValueFromJson(JSONObject json, String location) {
-        String[] keys = location.split("\\.");
+        List<String> keys = new LinkedList<String>(Arrays.asList(location.split("\\.")));
+        String parameter = keys.get(keys.size() - 1);
+
+        keys.stream().forEach(k -> System.out.println(k));
+
+        System.out.println("last: " + parameter);
+
+        keys.remove(keys.size() - 1);
 
         JSONObject node = json;
 
@@ -165,21 +172,23 @@ public class DocumentService {
         }
         System.out.println(node.toString());
 
-        return node.toString();
+        return node.getString(parameter);
     }
 
     private String parseResponse(JSONObject response, String template) {
+        System.out.println("parse START");
+        System.out.println("template: " + template);
         List<String> allMatches = new ArrayList<>();
-        Matcher m = Pattern.compile("(\\{\\{([a-z]|[A-Z]|[0-9]| |_)+\\}\\})+")
+        Matcher m = Pattern.compile("(\\{\\{([a-z]|[A-Z]|[0-9]| |_|\\.|(\\[[0-9]+\\]))+\\}\\})+")
                 .matcher(template);
         while (m.find()) {
             allMatches.add(m.group());
         }
 
-        allMatches.stream().forEach(matcher -> {
+        for (String matcher : allMatches) {
             System.out.println(matcher);
-            template.replace(matcher, getValueFromJson(response, removeBrackets(matcher)));
-        });
+            template = template.replace(matcher, getValueFromJson(response, removeBrackets(matcher)));
+        }
 
         System.out.println("parsed: " + template);
         return template;
