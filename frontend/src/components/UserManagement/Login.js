@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { login, getIsAdmin } from "../../actions/securityActions";
 import classnames from "classnames";
 import LoadingSpinner from "../LoadingSpinner";
+import { Link } from 'react-router-dom';
 
 class Login extends Component {
   state = {
@@ -52,76 +53,50 @@ class Login extends Component {
       data = <LoadingSpinner />;
     } else {
       data = (
-        <div className="section no-pad-bot" id="index-banner">
-          <div className="container">
-            <br />
-            <br />
-            <h1 className="header center blue-text text-darken-4">Login</h1>
-            <div className="row center">
-              <h5 className="header col s12 light">Log In to Your Account.</h5>
-            </div>
-            <div className="container">
-              <div className="row">
-                <form
-                  onSubmit={this.onSubmit}
-                  className="col s12 m12 l12 xl8 offset-xl2"
-                >
-                  <div className="input-field col s12 m12 l12 xl8 offset-xl2">
-                    <input
-                      name="username"
-                      id="email"
-                      type="email"
-                      className={classnames("validate", {
-                        "is-invalid": errors.username
-                      })}
-                      placeholder="Email"
-                      value={this.state.username}
-                      onChange={this.onChange}
-                    />
-                    <span
-                      className="helper-text"
-                    >
-                      {errors.username && (
-                        <div className="red-text text-darken-2">
-                          {errors.username}
-                        </div>
-                      )}
-                    </span>
-                  </div>
-                  <div className="input-field col s12 m12 l12 xl8 offset-xl2">
-                    <input
-                      name="password"
-                      type="password"
-                      className={classnames("validate", {
-                        "is-invalid": errors.password
-                      })}
-                      placeholder="Password"
-                      value={this.state.password}
-                      onChange={this.onChange}
-                    />
-                    <span
-                      className="helper-text"
-                    >
-                      {errors.password && (
-                        <div className="red-text text-darken-2">
-                          {errors.password}
-                        </div>
-                      )}
-                    </span>
-                  </div>
-                  <div className="input-field col s12 m12 l12 xl8 offset-xl2">
-                    <div className="input-field col s12 m12 l12 xl8 offset-xl2">
-                      <input
-                        className="waves-effect waves-light btn-large green darken-2 col col s12 m12 l12 xl8 offset-xl2 btn-trial-consultor valign-wrapper"
-                        type="submit"
-                      />
-                    </div>
-                  </div>
-                </form>
+        <div className="w-full flex flex-wrap">
+          {/* Login Section */}
+          <div className="w-full md:w-1/2 flex flex-col">
+            <div className="flex flex-col justify-center md:justify-start my-auto pt-8 md:pt-0 px-8 md:px-24 lg:px-32">
+              <p className="text-center text-3xl">Login</p>
+              <form className="flex flex-col pt-3 md:pt-8" onSubmit={this.onSubmit}>
+                <div className="flex flex-col pt-4">
+                  <label htmlFor="email" className="text-lg">Email</label>
+                  <input name="username" type="email" id="email" placeholder="your@email.com" value={this.state.username}
+                    onChange={this.onChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline" />
+                  <span
+                    className="helper-text"
+                  >
+                    {errors.username && (
+                      <div className="text-red-800">
+                        {errors.username}
+                      </div>
+                    )}
+                  </span>
+                </div>
+                <div className="flex flex-col pt-4">
+                  <label htmlFor="password" className="text-lg">Password</label>
+                  <input name="password" type="password" id="password" placeholder="Password" value={this.state.password}
+                    onChange={this.onChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mt-1 leading-tight focus:outline-none focus:shadow-outline" />
+                  <span
+                    className="helper-text"
+                  >
+                    {errors.password && (
+                      <div className="text-red-800">
+                        {errors.password}
+                      </div>
+                    )}
+                  </span>
+                </div>
+                <input type="submit" defaultValue="Log In" className="mt-6 mb-12 md:mb-0 md:mt-10 inline-block py-3 px-8 text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg shadow" />
+              </form>
+              <div className="text-center pt-12 pb-12">
+                <p>Don't have an account? <Link to="/register" className="underline font-semibold">Register here.</Link></p>
               </div>
             </div>
-            <br />
-            <br />
+          </div>
+          {/* Image Section */}
+          <div className="w-1/2 shadow-2xl">
+            <img className="object-cover w-full h-screen hidden md:block" src="https://source.unsplash.com/IXUM4cJynP0" />
           </div>
         </div>
       );
