@@ -175,6 +175,10 @@ public class DocumentService {
         return node.getString(parameter);
     }
 
+    private String addImageLoading(String template) {
+        return template.replaceAll("<img ", "<img onLoad={this.handleImageLoaded} ");
+    }
+
     private String parseResponse(JSONObject response, String template) {
         System.out.println("parse START");
         System.out.println("template: " + template);
@@ -188,6 +192,7 @@ public class DocumentService {
         for (String matcher : allMatches) {
             System.out.println(matcher);
             template = template.replace(matcher, getValueFromJson(response, removeBrackets(matcher)));
+            template = addImageLoading(template);
         }
 
         System.out.println("parsed: " + template);
