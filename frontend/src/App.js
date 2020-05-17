@@ -36,7 +36,7 @@ class App extends Component {
       <Provider store={store}>
         <BrowserRouter>
           <div className="App">
-            <Navbar />
+            
             <Switch>
               {
                 // Public Routes

@@ -17,15 +17,15 @@ class ExternalAPIResponse extends Component {
         break;
 
       case "Memes":
-        displayedComponent = <MemeComponent params={request.response.params} />;
+        displayedComponent = <MemeComponent params={request.response.params} scrolling={this.props.scrolling} />;
         break;
 
       case "QRcode":
         displayedComponent = <QRCodeComponent params={request.response.params} />
         break;
       case "Bitcoin":
-          displayedComponent = <BtcPriceComponent params={request.response.params} />
-          break;
+        displayedComponent = <BtcPriceComponent params={request.response.params} />
+        break;
 
       default:
         displayedComponent = "";
