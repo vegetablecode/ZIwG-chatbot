@@ -1,13 +1,13 @@
 div.chat-box {
-    display:block;
+    display: block;
     height: calc(100vh - 170px);
-    overflow:auto;
+    overflow: auto;
     margin-top: 20px;
     padding: 10px 20px;
     border-radius: 15px;
-  }
+}
 
-  div.card.indigo.lighten-5.text-wrap.chat-right {
+div.card.indigo.lighten-5.text-wrap.chat-right {
     float: right;
     width: 60%;
     clear: both;
@@ -19,17 +19,16 @@ div.card.grey.lighten-3.text-wrap.chat-left {
     clear: both;
 }
 
-div.card p{
+div.card p {
     overflow-wrap: break-word;
     word-wrap: break-word;
     hyphens: auto;
 }
 
-
 .box-shadow {
-    -webkit-box-shadow: 2px 2px 3px 1px rgba(152,152,158,1);
-    -moz-box-shadow: 2px 2px 3px 1px rgba(152,152,158,1);
-    box-shadow: 2px 2px 3px 1px rgba(152,152,158,1);
+    -webkit-box-shadow: 2px 2px 3px 1px rgba(152, 152, 158, 1);
+    -moz-box-shadow: 2px 2px 3px 1px rgba(152, 152, 158, 1);
+    box-shadow: 2px 2px 3px 1px rgba(152, 152, 158, 1);
     border-radius: 15px;
 }
 
@@ -74,7 +73,8 @@ i.icon-red {
 button.btn {
     margin-left: 5px;
     font-size: 12px;
-    -webkit-transition: font-size 0.2s; /* For Safari 3.1 to 6.0 */
+    -webkit-transition: font-size 0.2s;
+    /* For Safari 3.1 to 6.0 */
     transition: font-size 0.2s;
 }
 
@@ -83,20 +83,19 @@ button.btn:hover {
 }
 
 div#wave {
-	position:relative;
-	text-align:center;
-	width:100px;
-	margin-left: auto;
-	margin-right: auto;
+    position: relative;
+    text-align: left;
+    width: 100px;
+    margin-left: 0;
 }
 
 .dot {
-    display:inline-block;
-    width:8px;
-    height:8px;
-    border-radius:50%;
-    margin-right:3px;
-    background:#303131;
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 3px;
+    background: #191e38;
     animation: wave 1.3s linear infinite;
 }
 
@@ -109,13 +108,12 @@ div#wave {
 }
 
 @keyframes wave {
-	0%, 60%, 100% {
-		transform: initial;
-	}
-
-	30% {
-		transform: translateY(-15px);
-	}
+    0%, 60%, 100% {
+        transform: initial;
+    }
+    30% {
+        transform: translateY(-5px);
+    }
 }
 
 .avatar-image {
@@ -132,9 +130,9 @@ div#wave {
     display: inline-block;
     -webkit-filter: drop-shadow(1px 1px 1px rgb(126, 126, 126));
     filter: drop-shadow(1px 1px 1px rgb(126, 126, 126));
-  }
+}
 
-  .tabs .tab a:hover, .tabs .tab a.active {
+.tabs .tab a:hover, .tabs .tab a.active {
     background-color: transparent;
     color: #0d47a1;
 }
@@ -149,8 +147,8 @@ div#wave {
 
 .spinner {
     margin: 0 auto;
-    border: 6px solid #f3f3f3; 
-    border-top: 6px solid #0d47a1; 
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #0d47a1;
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -158,6 +156,10 @@ div#wave {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

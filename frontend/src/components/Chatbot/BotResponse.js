@@ -77,11 +77,7 @@ class BotResponse extends Component {
           <div className="flex-1 overflow-hidden">
             <div>
               <span className="font-bold">Chatbot</span>
-              <span className="text-grey text-xs"> ..:..</span>
             </div>
-            <p className="text-black leading-normal">
-              Chatbot is thinking...
-        </p>
             <div id="wave">
               <span className="dot" />
               <span className="dot" />
