@@ -23,6 +23,7 @@ class Login extends Component {
       username: this.state.username,
       password: this.state.password
     };
+    console.log(loginRequest)
     this.props.login(loginRequest);
     this.props.getIsAdmin();
     this.setState({
