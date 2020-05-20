@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,9 +108,9 @@ public class UserService {
         Map<String, String> response = new HashMap<>();
         User toUser;
 
-        if(fromUser.getIsAdmin()) {
+        if (fromUser.getIsAdmin()) {
             toUser = userRepository.findByUsername(toUsername.get("username"));
-            if(toUser != null) {
+            if (toUser != null) {
                 toUser.setIsAdmin(true);
                 userRepository.save(toUser);
                 String message = "User " + toUser.getUsername() + " is now admin!";
@@ -135,7 +136,7 @@ public class UserService {
         List<Request> userRequests = requestRepository.findAllByRequestOwner(currentUser.getUsername());
         Long lastMessageId = Long.valueOf(-1);
 
-        for (Request request: userRequests) {
+        for (Request request : userRequests) {
             if (request.getId() > lastMessageId)
                 lastMessageId = request.getId();
         }
@@ -161,5 +162,20 @@ public class UserService {
         message.setSubject(user + " send opinion about chatbot!");
         message.setText(text);
         emailSender.send(message);
+    }
+
+    public List<User> getAllUserDetails(User currentUser) {
+        List<User> users = new ArrayList<>();
+
+        // check if current user is admin & if user exists
+        if ((currentUser != null) && (currentUser.getIsAdmin())) {
+            Iterable<User> allUsers = userRepository.findAll();
+            for (User user : allUsers) {
+                user.setPassword("");
+                user.setRequests(new ArrayList<>());
+                users.add(user);
+            }
+        }
+        return users;
     }
 }

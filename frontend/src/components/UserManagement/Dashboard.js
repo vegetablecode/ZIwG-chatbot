@@ -6,12 +6,12 @@ import { baseUrl } from "../../config";
 import Select from "react-select";
 import { Table, Tabs, Icon } from "react-materialize";
 import AvatarNav from "../Chatbot/AvatarNav";
-import { Button } from 'react-rainbow-components';
 import { withRouter } from 'react-router-dom';
 import { Tabset, Tab, ButtonGroup, ButtonIcon } from 'react-rainbow-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faEllipsisV, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
+import { Button, Column, Badge, TableWithBrowserPagination, RadioButtonGroup } from 'react-rainbow-components';
 
 const StyledTabContent = styled.div`
   background: "#00FF00";
@@ -20,6 +20,16 @@ const StyledTabContent = styled.div`
   border-radius: 0 0 0.875rem 0.875rem;
 `;
 
+const StyledBadge = styled(Badge)`
+    color: #1de9b6;
+`;
+
+const StatusBadge = ({ value }) => <StyledBadge label={value ? "Yes" : "No"} variant="lightest" />;
+
+const values = [
+  { value: 'negative', label: 'Negative' },
+  { value: 'positive', label: 'Positive' }
+];
 
 class Dashboard extends Component {
   state = {
@@ -31,14 +41,24 @@ class Dashboard extends Component {
     positiveRatedResponses: [],
     backupFile: "",
     isMounted: false,
-    selected: 'recents'
+    selected: 'recents',
+    userDetails: [],
+    showPositive: false,
+    statusToShow: 'negative'
   };
 
   handleOnSelect = (event, selected) => {
     this.setState({ selected });
   }
 
-  getTabContent() {
+  parseCreatedAt = (d) => {
+    const date = new Date(d);
+    const dateTimeFormat = new Intl.DateTimeFormat('en', { year: 'numeric', month: 'short', day: '2-digit' });
+    const [{ value: month }, , { value: day }, , { value: year }] = dateTimeFormat.formatToParts(date);
+    return `${day} ${month} ${year}`;
+  }
+
+  getTabContent(options, adminAddedMessage) {
     const { selected } = this.state;
 
     if (selected === 'primary') {
@@ -46,17 +66,35 @@ class Dashboard extends Component {
         <StyledTabContent
           aria-labelledby="primary"
           id="primaryTab"
-          className="text-center"
+          className="w-full max-w-md pt-5 pl-5"
         >
-          <div className="container content-center">
-            <Button variant="neutral" className="rainbow-m-around_medium" onClick={() => this.downloadBackup("request")} >
+          <div className="mb-5">
+            <label className="block text-gray-900 text-xl font-bold">
               Download requests
-            <FontAwesomeIcon icon={faCheck} style={{ marginLeft: "5" }} />
-            </Button>
-            <Button variant="neutral" className="rainbow-m-around_medium" onClick={() => this.downloadBackup("users")} >
-              Download user data logs
-            <FontAwesomeIcon icon={faCheck} style={{ marginLeft: "5" }} />
-            </Button>
+            </label>
+            <label className="block text-gray-700 text-sm mb-2">
+              Download all requests as a JSON log
+            </label>
+            <div>
+              <Button variant="neutral" className="block" onClick={() => this.downloadBackup("request")} >
+                Download
+              <FontAwesomeIcon icon={faDownload} style={{ marginLeft: "5" }} />
+              </Button>
+            </div>
+          </div>
+          <div className="mb-5">
+            <label className="block text-gray-900 text-xl font-bold">
+              Download user data
+            </label>
+            <label className="block text-gray-700 text-sm mb-2">
+              Download all user data as a JSON log
+            </label>
+            <div>
+              <Button variant="neutral" className="block" onClick={() => this.downloadBackup("users")} >
+                Download
+              <FontAwesomeIcon icon={faDownload} style={{ marginLeft: "5" }} />
+              </Button>
+            </div>
           </div>
         </StyledTabContent>
       );
@@ -65,10 +103,30 @@ class Dashboard extends Component {
         <StyledTabContent
           aria-labelledby="recents"
           id="recentsTab"
-          className="rainbow-p-around_xx-large rainbow-font-size-text_large rainbow-align-text-center"
+          className="w-full pt-5 pl-5 pr-5"
         >
-          Rainbows caused by sunlight always appear in the section of sky directly
-          opposite the sun.
+          <div className="mb-5">
+            <label className="block text-gray-900 text-xl font-bold">
+              Rated Answers
+            </label>
+            <label className="block text-gray-700 text-sm mb-2">
+              Browse rated chatbot answers
+            </label>
+            <RadioButtonGroup
+              className="mb-5"
+              options={values}
+              value={this.state.statusToShow}
+              variant="brand"
+              onChange={(e) => this.setState({ statusToShow: e.target.value })}
+            />
+            <TableWithBrowserPagination pageSize={5} data={this.state.statusToShow === 'negative' ? this.state.negativeRatedResponses : this.state.positiveRatedResponses} keyField="id">
+              <Column header="User" field="id" />
+              <Column header="Question" field="question.query" />
+              <Column header="Intent" field="conversation.intent" />
+              <Column header="Response" field="response.message" />
+              <Column header="Request ID" field="response.message" />
+            </TableWithBrowserPagination>
+          </div>
         </StyledTabContent>
       );
     } else if (selected === 'shared') {
@@ -76,11 +134,40 @@ class Dashboard extends Component {
         <StyledTabContent
           aria-labelledby="shared"
           id="sharedTab"
-          className="rainbow-p-around_xx-large rainbow-font-size-text_large rainbow-align-text-center"
+          className="w-full pt-5 pl-5 pr-5"
         >
-          Rainbows can be full circles. However, the observer normally sees only an arc
-          formed by illuminated droplets above the ground, and centered on a line from the
-          sun to the observer's eye.
+          <div className="mb-5">
+            <label className="block text-gray-900 text-xl font-bold">
+              Attach user rights
+            </label>
+            <label className="block text-gray-700 text-sm mb-2">
+              Choose a user from list and give them admin rights
+            </label>
+            <div>
+              <Select
+                value={this.state.selectedOption}
+                onChange={this.handleChange}
+                options={options}
+              />
+              <p className="text-green-500 text-xs italic">
+                {adminAddedMessage}
+              </p>
+            </div>
+          </div>
+          <div className="mb-5">
+            <label className="block text-gray-900 text-xl font-bold">
+              Browse users
+            </label>
+            <label className="block text-gray-700 text-sm mb-2">
+              Browse chabot users
+            </label>
+            <TableWithBrowserPagination pageSize={5} data={this.state.userDetails} keyField="id">
+              <Column header="E-mail" field="username" />
+              <Column header="Admin" field="isAdmin" component={StatusBadge} />
+              <Column header="Full Name" field="fullName" />
+              <Column header="Created at" field="created_At" />
+            </TableWithBrowserPagination>
+          </div>
         </StyledTabContent>
       );
     } else if (selected === 'locked') {
@@ -90,8 +177,7 @@ class Dashboard extends Component {
           id="lockedTab"
           className="rainbow-p-around_xx-large rainbow-font-size-text_large rainbow-align-text-center"
         >
-          Rainbows can be full circles. However, the observer normally sees only an arc
-          formed by illuminated droplets above the ground.
+          Integrations here
         </StyledTabContent>
       );
     }
@@ -109,12 +195,30 @@ class Dashboard extends Component {
   }
 
   componentDidMount() {
-    // get user list
+    // get user details
     axios
       .get(baseUrl + "/api/users/getAllUsernames")
       .then(response => {
         console.log(response);
-        this.setState({ usernames: response.data });
+        this.setState({
+          usernames: response.data
+        });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+    // get user list
+    axios
+      .get(baseUrl + "/api/users/getAllUserDetails")
+      .then(response => {
+        this.setState({
+          userDetails: response.data.map(user => {
+            let newUser = user;
+            newUser.created_At = this.parseCreatedAt(user.created_At);
+            return newUser;
+          })
+        });
       })
       .catch(function (error) {
         console.log(error);
@@ -126,7 +230,6 @@ class Dashboard extends Component {
     axios
       .post(baseUrl + "/api/request/getRatedRequests", posRating)
       .then(response => {
-        console.log(response);
         this.setState({ positiveRatedResponses: response.data });
       })
       .catch(function (error) {
@@ -225,8 +328,7 @@ class Dashboard extends Component {
             </div>
             <div className="ml-auto md:block">
               <div className="relative">
-                <Button variant="base" label="< chatbot" onClick={() => this.props.history.push("/chatbot")} />
-                <AvatarNav />
+                <Button variant="base" label="Back to chatbot" onClick={() => this.props.history.push("/chatbot")} />
               </div>
             </div>
           </div>
@@ -247,7 +349,7 @@ class Dashboard extends Component {
               />
 
               <Tab
-                label="USERS"
+                label="INTEGRATIONS"
                 name="locked"
                 id="locked"
                 ariaControls="lockedTab"
@@ -258,98 +360,11 @@ class Dashboard extends Component {
                 id="recents"
                 ariaControls="recentsTab"
               />
-              <Tab label="INTEGRATIONS" name="shared" id="shared" ariaControls="sharedTab" />
+              <Tab label="USERS" name="shared" id="shared" ariaControls="sharedTab" />
             </Tabset>
-            {this.getTabContent()}
-          </div>
-          <div className="container">
-            <br />
-            <br />
-            <h1 className="header center blue-text text-darken-4">
-              Admin Dashboard
-          </h1>
-            <div className="container">
-              <div className="row center">
-                <h5 className="header col s12 light">Download backup file.</h5>
-                <div className="row">
-
-                </div>
-              </div>
-            </div>
-            <div className="container">
-              <div className="row center">
-                <h5 className="header col s12 light">Add admin rights.</h5>
-                <div>
-                  <div>
-                    <Select
-                      value={this.state.selectedOption}
-                      onChange={this.handleChange}
-                      options={options}
-                    />
-                  </div>
-                  {adminAddedMessage}
-                </div>
-              </div>
-            </div>
-            <div className="container">
-              <div className="row center">
-                <h5 className="header col s12 light">
-                  Recent negative rated responses
-              </h5>
-                <div>
-                  <div>
-                    <Tabs className="tab-demo z-depth-1">
-                      <Tab title="Negative rated">
-                        <Table>
-                          <thead>
-                            <tr>
-                              <th data-field="id">Request ID</th>
-                              <th data-field="username">User</th>
-                              <th data-field="query">Query</th>
-                              <th data-field="intent">Intent</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {this.state.negativeRatedResponses.map(request => (
-                              <tr key={request.id}>
-                                <td>{request.id}</td>
-                                <td>{request.requestOwner}</td>
-                                <td>{request.question.query}</td>
-                                <td>{request.question.intent}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </Table>
-                      </Tab>
-                      <Tab title="Positive rated" active>
-                        <Table>
-                          <thead>
-                            <tr>
-                              <th data-field="id">Request ID</th>
-                              <th data-field="username">User</th>
-                              <th data-field="query">Query</th>
-                              <th data-field="intent">Intent</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {this.state.positiveRatedResponses.map(request => (
-                              <tr key={request.id}>
-                                <td>{request.id}</td>
-                                <td>{request.requestOwner}</td>
-                                <td>{request.question.query}</td>
-                                <td>{request.conversation.intent}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </Table>
-                      </Tab>
-                    </Tabs>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div></div> : <div>loading...</div>
+            {this.getTabContent(options, adminAddedMessage)}
+          </div></div></div>
+        : <div>loading...</div>
     );
   }
 }
