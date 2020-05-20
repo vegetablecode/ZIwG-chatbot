@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Avatar, AvatarMenu, MenuDivider, MenuItem } from 'react-rainbow-components';
+import { Button, Modal, AvatarMenu, MenuDivider, MenuItem } from 'react-rainbow-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments, faPowerOff, faUserShield, faCog } from '@fortawesome/free-solid-svg-icons';
 import userDefaultAvatar from "../../assets/avatars/userDefault.png";
@@ -16,7 +16,18 @@ import {
     clearConversation
 } from "../../actions/securityActions";
 
+const textStyles = {
+    textAlign: 'center',
+    fontSize: 15,
+    padding: '0 16px',
+};
+
 class AvatarNav extends Component {
+
+    state = {
+        isOpen: false
+    }
+
     logout = e => {
         this.props.logout();
         window.location.href = "/";
@@ -32,7 +43,16 @@ class AvatarNav extends Component {
             page: 0
         };
         this.props.getRequests(pages);
+        this.handleOnClose();
     };
+
+    handleOnClick() {
+        return this.setState({ isOpen: true });
+    }
+
+    handleOnClose() {
+        return this.setState({ isOpen: false });
+    }
 
     render() {
         const { validToken, user } = this.props.security;
@@ -52,16 +72,19 @@ class AvatarNav extends Component {
                     label="New Conversation"
                     icon={<FontAwesomeIcon icon={faComments} />}
                     iconPosition="left"
+                    onClick={() => this.handleOnClick()}
                 />
                 <MenuItem
                     label="Settings"
                     icon={<FontAwesomeIcon icon={faCog} />}
                     iconPosition="left"
+                    onClick={() => this.props.history.push("/settings")}
                 />
                 <MenuItem
                     label="Logout"
                     icon={<FontAwesomeIcon icon={faPowerOff} />}
                     iconPosition="left"
+                    onClick={() => this.logout()}
                 />
             </React.Fragment>);
         } else {
@@ -85,18 +108,35 @@ class AvatarNav extends Component {
         }
 
         return (
-            <AvatarMenu
-                className="rainbow-m-horizontal_medium"
-                id="avatar-menu"
-                src={this.props.security.avatar === '' ? userDefaultAvatar : this.props.security.avatar}
-                assistiveText="Tahimi Leon"
-                menuAlignment="right"
-                menuSize="small"
-                avatarSize="large"
-                title="Tahimi Leon"
-            >
-                {dropdownLinks}
-            </AvatarMenu>
+            <React.Fragment>
+                <Modal
+                    isOpen={this.state.isOpen}
+                    onRequestClose={() => this.handleOnClose()}
+                    title="New context confirmation"
+                    footer={
+                        <div className="flex justify-between">
+                            <Button label="No" variant="neutral" onClick={() => this.handleOnClose()} />
+                            <Button label="Yes" variant="brand" onClick={() => this.clearUserConversation()} />
+                        </div>
+                    }
+                >
+                    <p style={textStyles}>
+                        Are you sure you want to start a new conversation?
+            </p>
+                </Modal>
+                <AvatarMenu
+                    className="rainbow-m-horizontal_medium"
+                    id="avatar-menu"
+                    src={this.props.security.avatar === '' ? userDefaultAvatar : this.props.security.avatar}
+                    assistiveText="Tahimi Leon"
+                    menuAlignment="right"
+                    menuSize="small"
+                    avatarSize="large"
+                    title="Tahimi Leon"
+                >
+                    {dropdownLinks}
+                </AvatarMenu>
+            </React.Fragment>
         )
     }
 }

@@ -121,6 +121,19 @@ public class UserController {
         return new ResponseEntity<Map>(userList, HttpStatus.OK);
     }
 
+    @GetMapping("/getAllUserDetails")
+    public ResponseEntity<?> getAllUserDetails(Principal principal) {
+        User currentUser;
+        List<User> users = new ArrayList<>();
+
+        if(principal != null) {
+            currentUser = userService.getUser(principal.getName());
+            users = userService.getAllUserDetails(currentUser);
+        }
+
+        return new ResponseEntity<List>(users, HttpStatus.OK);
+    }
+
     @PostMapping("/giveAdmin")
     public ResponseEntity<?> giveAdminPermissions(@RequestBody Map<String, String> user, Principal principal) {
         User fromUser;
