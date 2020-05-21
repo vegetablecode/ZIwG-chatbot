@@ -1,0 +1,68 @@
+
+import React, { Component } from 'react';
+import { Column, TableWithBrowserPagination, Button, ButtonIcon } from 'react-rainbow-components';
+import axios from "axios";
+import { baseUrl } from "../../../config";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFile } from '@fortawesome/free-solid-svg-icons'
+import { withRouter } from 'react-router-dom';
+
+
+class ApiDocumentPanel extends Component {
+    state = {
+        documents: []
+    }
+
+    componentDidMount() {
+        axios
+            .get(baseUrl + "/api/document/getAllDocuments")
+            .then(response => {
+                console.log(response);
+                this.setState({
+                    documents: response.data.map(document => {
+                        let newDocument = document;
+                        newDocument.keywords = newDocument.keywords.split(' ').join(', ');
+                        return newDocument;
+                    })
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+    editButton = ({ value }) => (
+        <React.Fragment>
+            <Button className="my-1 mr-1" variant="base" onClick={() => this.props.history.push("/apiedit/" + value)}>edit</Button>
+            <Button className="my-1 mr-1" style={{ color: "#c53030" }} variant="base">remove</Button>
+        </React.Fragment>
+    );
+
+    render() {
+        return (
+            <React.Fragment>
+                <div className="mb-5">
+                    <div className="flex justify-between">
+                        <div>
+                            <label className="block text-gray-900 text-xl font-bold">
+                                Active documents
+                            </label>
+                            <label className="block text-gray-700 text-sm mb-2">
+                                Browse all documents added to chatbot
+                            </label>
+                        </div>
+                        <ButtonIcon variant="outline-brand" size="large" icon={<FontAwesomeIcon icon={faFile} />} />
+                    </div>
+                    <TableWithBrowserPagination pageSize={5} data={this.state.documents} keyField="id">
+                        <Column header="Id" field="id" />
+                        <Column header="Keywords" field="keywords" />
+                        <Column header="Type" field="type" />
+                        <Column header="Actions" field="id" component={this.editButton} />
+                    </TableWithBrowserPagination>
+                </div>
+            </React.Fragment>
+        )
+    }
+}
+
+export default withRouter(ApiDocumentPanel);

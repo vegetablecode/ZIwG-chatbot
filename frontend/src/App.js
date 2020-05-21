@@ -14,6 +14,7 @@ import setJWTToken from "./securityUtils/setJWTToken";
 import { SET_CURRENT_USER } from "./actions/types";
 import { logout } from "./actions/securityActions";
 import Dashboard from "./components/UserManagement/Dashboard";
+import ApiDocumentEdit from "./components/UserManagement/Documents/ApiDocumentEdit";
 
 const jwtToken = localStorage.jwtToken;
 if (jwtToken) {
@@ -36,17 +37,18 @@ class App extends Component {
       <Provider store={store}>
         <BrowserRouter>
           <div className="App">
-            
+
             <Switch>
               {
                 // Public Routes
               }
-                <Route exact path="/" component={Landing} />
+              <Route exact path="/" component={Landing} />
               <Route exact path="/register" component={Register} />
               <Route exact path="/login" component={Login} />
               <Route path="/chatbot" component={Chatbot} />
               <Route path="/settings" component={Settings} />
               <Route path="/dashboard" component={Dashboard} />
+              <Route path="/apiedit/:documentId" component={ApiDocumentEdit} />
               {
                 // Private Routes
               }
