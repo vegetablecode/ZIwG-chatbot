@@ -1,11 +1,9 @@
 package pwr.inf.ziwg.chatbot.service;
 
-import com.google.gson.JsonObject;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-import okhttp3.Headers;
 
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,5 +214,13 @@ public class DocumentService {
         }
 
         return response;
+    }
+
+    public List<Document> getAllDocuments() {
+        return repository.findAll();
+    }
+
+    public Optional<Document> getRequestedDocument(String id) {
+        return repository.findById(Long.parseLong(id));
     }
 }

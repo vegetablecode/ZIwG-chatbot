@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDownload } from '@fortawesome/free-solid-svg-icons';
 import styled from 'styled-components';
 import { Button, Column, Badge, TableWithBrowserPagination, RadioButtonGroup } from 'react-rainbow-components';
+import ApiDocumentPanel from "./Documents/ApiDocumentPanel";
 
 const StyledTabContent = styled.div`
   background: "#00FF00";
@@ -175,9 +176,9 @@ class Dashboard extends Component {
         <StyledTabContent
           aria-labelledby="locked"
           id="lockedTab"
-          className="rainbow-p-around_xx-large rainbow-font-size-text_large rainbow-align-text-center"
+          className="w-full pt-5 pl-5 pr-5"
         >
-          Integrations here
+          <ApiDocumentPanel />
         </StyledTabContent>
       );
     }
