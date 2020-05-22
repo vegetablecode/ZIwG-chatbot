@@ -10,6 +10,10 @@ import {
     faArrowDown,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import AceEditor from "react-ace";
+
+import "ace-builds/src-noconflict/mode-java";
+import "ace-builds/src-noconflict/theme-github";
 
 const values = [
     { value: 'GET', label: 'GET' },
@@ -25,12 +29,36 @@ class ApiDocumentEdit extends Component {
         params: [],
         headers: [],
         endpoint: "",
-        method: ""
+        method: "",
+        body: "",
+        template: ""
     }
 
     onChange = e => {
         this.setState({ [e.target.name]: e.target.value });
     };
+
+    saveDocument = () => {
+        const { match: { params } } = this.props;
+        const updatedDocument = {
+            id: params.documentId,
+            keywords: this.state.keywords.split(', ').join(' '),
+            params: this.state.params,
+            headers: this.state.headers,
+            endpoint: this.state.endpoint,
+            method: this.state.method,
+            body: this.state.body,
+            template: this.state.template
+        };
+
+        axios.post(baseUrl + `/api/document/addDocument`, updatedDocument)
+            .then(response => {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     onParamsLabelChange = idx => evt => {
         const newParams = this.state.params.map((param, sidx) => {
@@ -82,7 +110,7 @@ class ApiDocumentEdit extends Component {
 
     handleAddHeader = () => {
         this.setState({
-            headers: this.state.headers.concat([{ label: "", type: "", regex: "" }])
+            headers: this.state.headers.concat([{ key: "", value: "" }])
         });
     };
 
@@ -104,7 +132,9 @@ class ApiDocumentEdit extends Component {
                     params: response.data.params,
                     headers: response.data.headers,
                     endpoint: response.data.endpoint,
-                    method: response.data.method
+                    method: response.data.method,
+                    body: response.data.body,
+                    template: response.data.template
                 });
             })
             .catch(function (error) {
@@ -250,6 +280,67 @@ class ApiDocumentEdit extends Component {
                                     + new header
                                 </Button>
                             </div>
+                        </div>
+                        {this.state.method === 'POST' || this.state.method === 'PUT' ? (
+                            <div className="mb-5">
+                                <label className="block text-gray-900 text-xl font-bold">
+                                    Request body
+                            </label>
+                                <label className="block text-gray-700 text-sm mb-2">
+                                    You can refer to parametes by putting them in double curly brackets
+                            </label>
+                                <AceEditor
+                                    style={{ width: "100%" }}
+                                    mode="json"
+                                    value={this.state.body}
+                                    onChange={value => this.setState({ body: value })}
+                                    name="UNIQUE_ID_OF_DIV"
+                                    editorProps={{ $blockScrolling: true }}
+                                    fontSize={14}
+                                    showPrintMargin={true}
+                                    showGutter={true}
+                                    highlightActiveLine={true}
+                                    setOptions={{
+                                        enableBasicAutocompletion: true,
+                                        enableLiveAutocompletion: true,
+                                        enableSnippets: false,
+                                        showLineNumbers: true,
+                                        tabSize: 2,
+                                    }}
+                                />
+                            </div>
+                        ) : ""}
+                        <div className="mb-5">
+                            <label className="block text-gray-900 text-xl font-bold">
+                                Template
+                            </label>
+                            <label className="block text-gray-700 text-sm mb-2">
+                                You can refer to json response elements by putting them in curly brackets
+                            </label>
+                            <AceEditor
+                                style={{ width: "100%" }}
+                                mode="html"
+                                value={this.state.template}
+                                onChange={value => this.setState({ template: value })}
+                                name="UNIQUE_ID_OF_DIV"
+                                editorProps={{ $blockScrolling: true }}
+                                fontSize={14}
+                                showPrintMargin={true}
+                                showGutter={true}
+                                highlightActiveLine={true}
+                                setOptions={{
+                                    enableBasicAutocompletion: true,
+                                    enableLiveAutocompletion: true,
+                                    enableSnippets: false,
+                                    showLineNumbers: true,
+                                    tabSize: 2,
+                                }}
+                            />
+                        </div>
+                        <div className="flex justify-center mt-3">
+                            <Button className="flex-grow-0" variant="brand" onClick={() => this.saveDocument()}>
+                                Save document
+                            </Button>
                         </div>
                     </div>
                 </div></div>
