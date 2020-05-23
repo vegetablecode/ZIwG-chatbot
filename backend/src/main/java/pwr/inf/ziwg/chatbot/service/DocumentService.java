@@ -134,7 +134,10 @@ public class DocumentService {
         }
 
         if (httpResponse != null) {
+//            response.put("res ", httpResponse.getBody().getObject());
+//            System.out.println(response.toString());
             response = httpResponse.getBody().getObject();
+            System.out.println("HTTP__RESPONSE: " + response.toString());
         }
 
         System.out.println("response -> " + response.toString());
