@@ -53,7 +53,7 @@ public class DocumentService {
         repository.findAll().forEach(documentList::add);
 
         Optional<Document> match = documentList.stream()
-                .filter(document -> getNumbOfCommonElements(document.getKeywords(), query) > 1)
+                .filter(document -> getNumbOfCommonElements(document.getKeywords(), query) > 0)
                 .sorted((o1, o2) -> getNumbOfCommonElements(o2.getKeywords(), query)
                         - (getNumbOfCommonElements(o1.getKeywords(), query)))
                 .findFirst();

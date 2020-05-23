@@ -24,7 +24,13 @@ public class Document {
     // API
     private String endpoint;
     private String method;
+
+    @Lob
+    @Column(length = 65535,columnDefinition="Text")
     private String body;
+
+    @Lob
+    @Column(length = 65535,columnDefinition="Text")
     private String template;
 
     public Document() {

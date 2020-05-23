@@ -1,6 +1,6 @@
 
 import React, { Component } from 'react';
-import { Column, TableWithBrowserPagination, Button, ButtonIcon } from 'react-rainbow-components';
+import { Column, TableWithBrowserPagination, Button, ButtonMenu, MenuItem } from 'react-rainbow-components';
 import axios from "axios";
 import { baseUrl } from "../../../config";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -58,7 +58,7 @@ class ApiDocumentPanel extends Component {
         return (
             <React.Fragment>
                 <div className="mb-5">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                         <div>
                             <label className="block text-gray-900 text-xl font-bold">
                                 Active documents
@@ -67,7 +67,14 @@ class ApiDocumentPanel extends Component {
                                 Browse all documents added to chatbot
                             </label>
                         </div>
-                        <ButtonIcon variant="outline-brand" size="large" icon={<FontAwesomeIcon icon={faFile} />} />
+                        <ButtonMenu
+                            menuAlignment="right"
+                            menuSize="x-small"
+                            buttonVariant="brand"
+                            icon={<FontAwesomeIcon size="large" icon={faFile} />}
+                        >
+                            <MenuItem label="REST API" onClick={() => this.props.history.push("/apiedit/" + "new")} />
+                        </ButtonMenu>
                     </div>
                     <TableWithBrowserPagination pageSize={5} data={this.state.documents} keyField="id">
                         <Column header="Id" field="id" />

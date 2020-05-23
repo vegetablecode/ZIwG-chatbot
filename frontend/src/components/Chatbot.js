@@ -14,6 +14,7 @@ import EmptyResponse from './Chatbot/EmptyResponse';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faArrowUp } from '@fortawesome/free-solid-svg-icons'
 import AvatarNav from './Chatbot/AvatarNav';
+import "../styles/Chatbot.css";
 
 class Chatbot extends Component {
   state = {
@@ -157,7 +158,7 @@ class Chatbot extends Component {
               </div>
             </div>
             {/* Chat messages */}
-            <div className="px-6 py-4 flex-1 overflow-y-scroll" id="messageBody">
+            <div className="px-6 py-4 flex-1 overflow-y-scroll cbot" id="messageBody">
               {requestList}
             </div>
             <div className="pb-6 px-4 flex-none">
