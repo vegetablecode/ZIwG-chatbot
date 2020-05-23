@@ -26,7 +26,7 @@ class ApiDocumentEdit extends Component {
         params: [],
         headers: [],
         endpoint: "",
-        method: "",
+        method: "GET",
         body: "",
         template: "",
         showSuccessAlert: false,
@@ -39,17 +39,31 @@ class ApiDocumentEdit extends Component {
 
     saveDocument = () => {
         const { match: { params } } = this.props;
-        const updatedDocument = {
-            id: params.documentId,
-            keywords: this.state.keywords.split(', ').join(' '),
-            params: this.state.params,
-            headers: this.state.headers,
-            endpoint: this.state.endpoint,
-            method: this.state.method,
-            body: this.state.body,
-            template: this.state.template,
-            type: this.state.document.type
-        };
+        let updatedDocument = {};
+        if (params.documentId !== 'new') {
+            updatedDocument = {
+                id: params.documentId,
+                keywords: this.state.keywords.split(', ').join(' '),
+                params: this.state.params,
+                headers: this.state.headers,
+                endpoint: this.state.endpoint,
+                method: this.state.method,
+                body: this.state.body,
+                template: this.state.template,
+                type: this.state.document.type
+            };
+        } else {
+            updatedDocument = {
+                keywords: this.state.keywords.split(', ').join(' '),
+                params: this.state.params,
+                headers: this.state.headers,
+                endpoint: this.state.endpoint,
+                method: this.state.method,
+                body: this.state.body,
+                template: this.state.template,
+                type: "API"
+            };
+        }
 
         axios.post(baseUrl + `/api/document/addDocument`, updatedDocument)
             .then(response => {
@@ -65,7 +79,7 @@ class ApiDocumentEdit extends Component {
                     showSuccessAlert: true
                 });
             })
-            .catch(function (error) {
+            .catch((error) => {
                 console.log(error);
                 this.setState({
                     showWarningAlert: true
@@ -148,23 +162,25 @@ class ApiDocumentEdit extends Component {
     componentDidMount() {
         const { match: { params } } = this.props;
 
-        axios.get(baseUrl + `/api/document/getDocument/${params.documentId}`)
-            .then(response => {
-                console.log(response);
-                this.setState({
-                    document: response.data,
-                    keywords: response.data.keywords.split(' ').join(', '),
-                    params: response.data.params,
-                    headers: response.data.headers,
-                    endpoint: response.data.endpoint,
-                    method: response.data.method,
-                    body: response.data.body,
-                    template: response.data.template
+        if (params.documentId !== 'new') {
+            axios.get(baseUrl + `/api/document/getDocument/${params.documentId}`)
+                .then(response => {
+                    console.log(response);
+                    this.setState({
+                        document: response.data,
+                        keywords: response.data.keywords.split(' ').join(', '),
+                        params: response.data.params,
+                        headers: response.data.headers,
+                        endpoint: response.data.endpoint,
+                        method: response.data.method,
+                        body: response.data.body,
+                        template: response.data.template
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
                 });
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
+        }
     }
 
     render() {
