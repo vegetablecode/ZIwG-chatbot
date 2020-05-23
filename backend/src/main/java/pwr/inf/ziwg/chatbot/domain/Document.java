@@ -13,11 +13,11 @@ public class Document {
 
     private String keywords;
 
-    @OneToMany(targetEntity = DocumentParameter.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = DocumentParameter.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<DocumentParameter> params = new ArrayList<>();
 
-    @OneToMany(targetEntity = Header.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Header>  headers = new ArrayList<>();
+    @OneToMany(targetEntity = Header.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Header> headers = new ArrayList<>();
 
     private String type;
 

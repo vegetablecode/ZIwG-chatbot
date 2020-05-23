@@ -44,6 +44,11 @@ public class RequestService {
         return requestRepository.findAll();
     }
 
+    public Request findLastUserRequest(String username) {
+        List<Request> requests = requestRepository.findAllByRequestOwner(username);
+        return requests.size() > 0 ? requests.get(requests.size() - 1) : null;
+    }
+
     public Iterable<Request> findAllUserRequests(String username) {
         Iterable<Request> allRequests = requestRepository.findAll();
         List<Request> userRequests = new ArrayList<>();
@@ -84,11 +89,11 @@ public class RequestService {
         int pageSize = 3;
         int pageNumber = Integer.parseInt(pages.get("page"));
 
-        if(lastMessageId == null)
+        if (lastMessageId == null)
             lastMessageId = Long.valueOf(-1);
 
         List<Request> requests = new ArrayList<>();
-        for(int i=pageNumber; i>=0; i--) {
+        for (int i = pageNumber; i >= 0; i--) {
             Pageable page = PageRequest.of(i, pageSize, Sort.by("id").descending());
             List<Request> requestPage = requestRepository.findAllByRequestOwnerAndIdGreaterThan(username, page, lastMessageId);
             Collections.reverse(requestPage);
@@ -101,7 +106,7 @@ public class RequestService {
     public Iterable<Request> findRatedRequests(User user, Map<String, String> rating) {
         String ratingNumber = rating.get("rating");
 
-        if(user.getIsAdmin() && (ratingNumber != null)) {
+        if (user.getIsAdmin() && (ratingNumber != null)) {
             return requestRepository.findAllByResponseRating(ratingNumber);
         }
         return new ArrayList<Request>();
@@ -116,7 +121,7 @@ public class RequestService {
         Date lastRequestDate = new Date();
         long days;
         List<Request> requests = requestRepository.findFirst1ByOrderByDateAsc();
-        if(requests != null) {
+        if (requests != null) {
             Request request = requests.get(0);
             lastRequestDate = request.getDate();
         }
@@ -127,7 +132,7 @@ public class RequestService {
 
     public Conversation getCurrentConversation(String conversationId) {
         Conversation conversation = null;
-        if(!conversationId.isEmpty()) {
+        if (!conversationId.isEmpty()) {
             conversation = conversationRepository.findByWatsonId(conversationId);
         }
         return conversation == null ? new Conversation() : conversation;

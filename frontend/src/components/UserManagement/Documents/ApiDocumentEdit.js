@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
 import { baseUrl } from "../../../config";
 import axios from "axios";
-import { Input, Button, ButtonIcon, RadioButtonGroup } from 'react-rainbow-components';
+import { Input, Button, ButtonIcon, RadioButtonGroup, Notification } from 'react-rainbow-components';
 import { withRouter } from "react-router-dom";
 import {
     faTrashAlt,
-    faPencilAlt,
-    faLocationArrow,
-    faArrowDown,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import AceEditor from "react-ace";
@@ -31,7 +28,9 @@ class ApiDocumentEdit extends Component {
         endpoint: "",
         method: "",
         body: "",
-        template: ""
+        template: "",
+        showSuccessAlert: false,
+        showWarningAlert: false
     }
 
     onChange = e => {
@@ -48,15 +47,29 @@ class ApiDocumentEdit extends Component {
             endpoint: this.state.endpoint,
             method: this.state.method,
             body: this.state.body,
-            template: this.state.template
+            template: this.state.template,
+            type: this.state.document.type
         };
 
         axios.post(baseUrl + `/api/document/addDocument`, updatedDocument)
             .then(response => {
-                console.log(response);
+                this.setState({
+                    document: response.data,
+                    keywords: response.data.keywords.split(' ').join(', '),
+                    params: response.data.params,
+                    headers: response.data.headers,
+                    endpoint: response.data.endpoint,
+                    method: response.data.method,
+                    body: response.data.body,
+                    template: response.data.template,
+                    showSuccessAlert: true
+                });
             })
             .catch(function (error) {
                 console.log(error);
+                this.setState({
+                    showWarningAlert: true
+                });
             });
     }
 
@@ -120,6 +133,18 @@ class ApiDocumentEdit extends Component {
         });
     };
 
+    closeSuccessAlert = () => {
+        this.setState({
+            showSuccessAlert: false
+        })
+    };
+
+    closeWarningAlert = () => {
+        this.setState({
+            showWarningAlert: false
+        })
+    };
+
     componentDidMount() {
         const { match: { params } } = this.props;
 
@@ -159,6 +184,27 @@ class ApiDocumentEdit extends Component {
                             </div>
                         </div>
                     </div>
+                    {this.state.showSuccessAlert ? (
+                        <div className="fixed top-0 right-0 mt-3 mr-3 z-10" onClick={() => this.closeSuccessAlert()}>
+                            <Notification
+                                title="Success"
+                                description="The document has been successfully updated."
+                                icon="success"
+                                onRequestClose={() => this.closeSuccessAlert()}
+                            />
+                        </div>
+                    ) : ""}
+                    {this.state.showWarningAlert ? (
+                        <div className="fixed top-0 right-0 mt-3 mr-3 z-10" onClick={() => this.closeWarningAlert()}>
+                            <Notification
+                                className="transition duration-200 ease-in transform -translate-y-1"
+                                title="Something went wrong..."
+                                description="We cannot update the document."
+                                icon="error"
+                                onRequestClose={() => this.closeWarningAlert()}
+                            />
+                        </div>
+                    ) : ""}
                     <div className="m-5 lg:mx-64">
                         <div className="mb-5">
                             <label className="block text-gray-900 text-xl font-bold">

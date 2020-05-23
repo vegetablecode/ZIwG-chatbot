@@ -112,7 +112,8 @@ public class DocumentService {
         System.out.println(params.toString());
 
         for (String key : params.keySet()) {
-            endpoint = endpoint.replace("{{" + key + "}}", params.getOrDefault(key, ""));
+            String urlKey = key.replace(" ", "%20");
+            endpoint = endpoint.replace("{{" + urlKey + "}}", params.getOrDefault(key, ""));
             body = body.replace("{{" + key + "}}", params.getOrDefault(key, ""));
         }
 
