@@ -46,4 +46,12 @@ public class DocumentController {
         return new ResponseEntity<Document>(document.get(), HttpStatus.OK);
     }
 
+    @DeleteMapping("/removeDocument/{id}")
+    public ResponseEntity<?> removeDocument(@PathVariable String id) {
+        service.removeDocument(id);
+        HashMap<String, String> response = new HashMap();
+        response.put("status", "success");
+        return new ResponseEntity<HashMap<String, String>>(response, HttpStatus.OK);
+    }
+
 }

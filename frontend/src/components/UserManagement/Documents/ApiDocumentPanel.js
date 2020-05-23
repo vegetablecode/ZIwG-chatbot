@@ -13,7 +13,7 @@ class ApiDocumentPanel extends Component {
         documents: []
     }
 
-    componentDidMount() {
+    getData = () => {
         axios
             .get(baseUrl + "/api/document/getAllDocuments")
             .then(response => {
@@ -31,10 +31,26 @@ class ApiDocumentPanel extends Component {
             });
     }
 
+    componentDidMount() {
+        this.getData();
+    }
+
+    removeDocument = value => {
+        axios
+            .delete(baseUrl + `/api/document/removeDocument/${value}`)
+            .then(response => {
+                console.log(response);
+                this.getData();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     editButton = ({ value }) => (
         <React.Fragment>
             <Button className="my-1 mr-1" variant="base" onClick={() => this.props.history.push("/apiedit/" + value)}>edit</Button>
-            <Button className="my-1 mr-1" style={{ color: "#c53030" }} variant="base">remove</Button>
+            <Button className="my-1 mr-1" style={{ color: "#c53030" }} variant="base" onClick={() => this.removeDocument(value)}>remove</Button>
         </React.Fragment>
     );
 
