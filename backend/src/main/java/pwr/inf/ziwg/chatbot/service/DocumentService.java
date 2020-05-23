@@ -224,4 +224,8 @@ public class DocumentService {
     public Optional<Document> getRequestedDocument(String id) {
         return repository.findById(Long.parseLong(id));
     }
+
+    public void removeDocument(String id) {
+        repository.deleteById(Long.parseLong(id));
+    }
 }
