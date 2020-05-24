@@ -8,30 +8,14 @@ class UserRequest extends Component {
 
     let avatar;
     if (this.props.security.avatar === '') {
-      avatar = (
-        <div className='avatar-bg'>
-          <img
-            src={userDefaultAvatar}
-            alt='user-default-avatar'
-            className='avatar-image'
-          />
-        </div>
-      );
+      avatar = userDefaultAvatar;
     } else {
-      avatar = (
-        <div className='avatar-bg'>
-          <img
-            src={this.props.security.avatar}
-            alt='user-avatar'
-            className='avatar-image'
-          />
-        </div>
-      );
+      avatar = this.props.security.avatar;
     }
 
     return (
       <div className="flex items-start mb-4 text-sm">
-        <img src={userDefaultAvatar} className="w-10 h-10 rounded mr-3" />
+        <img src={avatar} className="w-10 h-10 rounded mr-3" />
         <div className="flex-1 overflow-hidden">
           <div>
             <span className="font-bold">User</span>

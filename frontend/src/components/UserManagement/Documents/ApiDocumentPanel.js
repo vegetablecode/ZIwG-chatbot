@@ -35,6 +35,15 @@ class ApiDocumentPanel extends Component {
         this.getData();
     }
 
+    openEditMode = (value) => {
+        const documentType = this.state.documents.filter(i => i.id === value)[0].type;
+        if (documentType === 'API') {
+            this.props.history.push("/apiedit/" + value);
+        } else if (documentType === 'ZAPIER') {
+            this.props.history.push('/zapieredit/' + value);
+        }
+    }
+
     removeDocument = value => {
         axios
             .delete(baseUrl + `/api/document/removeDocument/${value}`)
@@ -49,7 +58,7 @@ class ApiDocumentPanel extends Component {
 
     editButton = ({ value }) => (
         <React.Fragment>
-            <Button className="my-1 mr-1" variant="base" onClick={() => this.props.history.push("/apiedit/" + value)}>edit</Button>
+            <Button className="my-1 mr-1" variant="base" onClick={() => this.openEditMode(value)}>edit</Button>
             <Button className="my-1 mr-1" style={{ color: "#c53030" }} variant="base" onClick={() => this.removeDocument(value)}>remove</Button>
         </React.Fragment>
     );
@@ -74,6 +83,7 @@ class ApiDocumentPanel extends Component {
                             icon={<FontAwesomeIcon size="large" icon={faFile} />}
                         >
                             <MenuItem label="REST API" onClick={() => this.props.history.push("/apiedit/" + "new")} />
+                            <MenuItem label="ZAPIER" onClick={() => this.props.history.push("/zapieredit/" + "new")} />
                         </ButtonMenu>
                     </div>
                     <TableWithBrowserPagination pageSize={5} data={this.state.documents} keyField="id">
