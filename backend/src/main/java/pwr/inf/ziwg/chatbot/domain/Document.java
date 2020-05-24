@@ -2,7 +2,9 @@ package pwr.inf.ziwg.chatbot.domain;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Document {
@@ -119,4 +121,5 @@ public class Document {
     public void setHeaders(List<Header> headers) {
         this.headers = headers;
     }
+
 }

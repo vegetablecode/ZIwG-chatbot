@@ -1,5 +1,6 @@
 package pwr.inf.ziwg.chatbot.service;
 
+import com.google.gson.JsonObject;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -8,10 +9,8 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pwr.inf.ziwg.chatbot.domain.Document;
-import pwr.inf.ziwg.chatbot.domain.DocumentParameter;
-import pwr.inf.ziwg.chatbot.domain.Header;
-import pwr.inf.ziwg.chatbot.domain.Request;
+import pwr.inf.ziwg.chatbot.domain.*;
+import pwr.inf.ziwg.chatbot.repository.ConversationRepository;
 import pwr.inf.ziwg.chatbot.repository.DocumentParameterRepository;
 import pwr.inf.ziwg.chatbot.repository.DocumentRepository;
 import pwr.inf.ziwg.chatbot.repository.HeaderRepository;
@@ -29,6 +28,9 @@ public class DocumentService {
 
     @Autowired
     private DocumentParameterRepository documentParameterRepository;
+
+    @Autowired
+    private ConversationRepository conversationRepository;
 
     @Autowired
     private HeaderRepository headerRepository;
@@ -49,13 +51,15 @@ public class DocumentService {
     }
 
     public Optional<Document> getDocumentType(String query) {
+        query = query.replaceAll("[-+.^:,?]", "");
         List<Document> documentList = new ArrayList<>();
         repository.findAll().forEach(documentList::add);
 
+        String finalQuery = query;
         Optional<Document> match = documentList.stream()
-                .filter(document -> getNumbOfCommonElements(document.getKeywords(), query) > 0)
-                .sorted((o1, o2) -> getNumbOfCommonElements(o2.getKeywords(), query)
-                        - (getNumbOfCommonElements(o1.getKeywords(), query)))
+                .filter(document -> getNumbOfCommonElements(document.getKeywords(), finalQuery) > 0)
+                .sorted((o1, o2) -> getNumbOfCommonElements(o2.getKeywords(), finalQuery)
+                        - (getNumbOfCommonElements(o1.getKeywords(), finalQuery)))
                 .findFirst();
 
         return match;
@@ -145,6 +149,46 @@ public class DocumentService {
         return response;
     }
 
+    private JSONObject getResponseFromDocumentContainer(String key) throws UnirestException {
+        JSONObject response = new JSONObject();
+
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("Content-Type", "application/json");
+
+        String containerEndpoint = "https://serverless-chatbot-m08jik8es.now.sh/api/getDocument";
+        JsonObject jsonBody = new JsonObject();
+        jsonBody.addProperty("key", key);
+        String body = jsonBody.toString();
+        System.out.println("DOC_CONTAINER_BODY: " + body);
+
+        HttpResponse<JsonNode> httpResponse = null;
+        int i = 0;
+        boolean responseFound = false;
+        while (!responseFound) {
+            System.out.println("-try");
+            i++;
+            httpResponse = Unirest.post(containerEndpoint).headers(headers).body(body).asJson();
+            if (httpResponse.getBody() != null) {
+                if (httpResponse.getBody().getObject() != null) {
+                    if (httpResponse.getBody().getObject().has("document")) {
+                        responseFound = true;
+                    }
+                }
+            }
+            if (i > 10) break;
+        }
+
+        System.out.println("RES IS HERE: " + httpResponse.getBody().toString());
+
+        if (httpResponse != null && httpResponse.getBody().getObject().has("document")) {
+            response = httpResponse.getBody().getObject().getJSONObject("document");
+            System.out.println("DOC_CONTAINER_RES: " + response);
+        }
+
+
+        return response;
+    }
+
     private String removeBrackets(String str) {
         return str.replaceAll("\\{\\{(.*)\\}\\}", "$1");
     }
@@ -167,9 +211,17 @@ public class DocumentService {
 
             if (m.find()) {
                 int id = Integer.parseInt(key.substring(key.indexOf("[") + 1, key.indexOf("]")));
-                node = node.getJSONArray(key.substring(0, key.indexOf("["))).getJSONObject(id);
+                if (node.has(key.substring(0, key.indexOf("[")))) {
+                    node = node.getJSONArray(key.substring(0, key.indexOf("["))).getJSONObject(id);
+                } else {
+                    return "<i>Cannot find any matching item in given array. Check the template</i>";
+                }
             } else {
-                node = node.getJSONObject(key);
+                if (node.has(key)) {
+                    node = node.getJSONObject(key);
+                } else {
+                    return "<i>Cannot find any matching this key. Check the template</i>";
+                }
             }
         }
         System.out.println(node.toString());
@@ -213,11 +265,42 @@ public class DocumentService {
                 JSONObject apiResponse = getResponseFromAPI(document.getMethod(), document.getEndpoint(), document.getBody(), paramsMap, document.getHeaders());
                 response = parseResponse(apiResponse, document.getTemplate());
                 break;
+            case "ZAPIER":
+                String key = generateRandomKey();
+                String zapierBody = generateZapierBody(paramsMap, key);
+                JSONObject webhookResponse = getResponseFromAPI(document.getMethod(), document.getEndpoint(), zapierBody, paramsMap, document.getHeaders());
+
+                JSONObject documentContainerResponse = getResponseFromDocumentContainer(key);
+                response = parseResponse(documentContainerResponse, document.getTemplate());
+                break;
             default:
                 response = "Cannot determine document type";
         }
 
         return response;
+    }
+
+    private String generateZapierBody(Map<String, String> paramsMap, String key) {
+        paramsMap.put("key", key);
+        JsonObject jsonBody = new JsonObject();
+        for (String item : paramsMap.keySet()) {
+            jsonBody.addProperty(item, paramsMap.get(item));
+        }
+        System.out.println("GENERATED_ZAPIER_BODY: " + jsonBody.toString());
+        return jsonBody.toString();
+    }
+
+    private String generateRandomKey() {
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 10;
+        Random random = new Random();
+
+        String generatedString = random.ints(leftLimit, rightLimit + 1)
+                .limit(targetStringLength)
+                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                .toString();
+        return generatedString;
     }
 
     public List<Document> getAllDocuments() {
@@ -229,6 +312,14 @@ public class DocumentService {
     }
 
     public void removeDocument(String id) {
+        Long index = Long.parseLong(id);
+        Iterable<Conversation> conversations = conversationRepository.findAll();
+        for (Conversation conversation : conversations) {
+            if (conversation.getDocument().getId().equals(index)) {
+                conversation.setDocument(null);
+                conversationRepository.save(conversation);
+            }
+        }
         repository.deleteById(Long.parseLong(id));
     }
 }

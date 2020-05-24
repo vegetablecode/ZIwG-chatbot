@@ -58,6 +58,13 @@ class AvatarNav extends Component {
         const { validToken, user } = this.props.security;
         const isAdmin = this.props.security.isAdmin;
 
+        let avatar;
+        if (this.props.security.avatar === '') {
+            avatar = userDefaultAvatar;
+        } else {
+            avatar = this.props.security.avatar;
+        }
+
         let dropdownLinks;
         if (isAdmin) {
             dropdownLinks = (<React.Fragment>
@@ -93,16 +100,19 @@ class AvatarNav extends Component {
                     label="New Conversation"
                     icon={<FontAwesomeIcon icon={faComments} />}
                     iconPosition="left"
+                    onClick={() => this.handleOnClick()}
                 />
                 <MenuItem
                     label="Settings"
                     icon={<FontAwesomeIcon icon={faCog} />}
                     iconPosition="left"
+                    onClick={() => this.props.history.push("/settings")}
                 />
                 <MenuItem
                     label="Logout"
                     icon={<FontAwesomeIcon icon={faPowerOff} />}
                     iconPosition="left"
+                    onClick={() => this.logout()}
                 />
             </React.Fragment>);
         }
@@ -127,7 +137,7 @@ class AvatarNav extends Component {
                 <AvatarMenu
                     className="rainbow-m-horizontal_medium"
                     id="avatar-menu"
-                    src={this.props.security.avatar === '' ? userDefaultAvatar : this.props.security.avatar}
+                    src={avatar}
                     assistiveText="Tahimi Leon"
                     menuAlignment="right"
                     menuSize="small"

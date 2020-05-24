@@ -15,6 +15,7 @@ import { SET_CURRENT_USER } from "./actions/types";
 import { logout } from "./actions/securityActions";
 import Dashboard from "./components/UserManagement/Dashboard";
 import ApiDocumentEdit from "./components/UserManagement/Documents/ApiDocumentEdit";
+import ZapierDocumentEdit from "./components/UserManagement/Documents/ZapierDocumentEdit";
 
 const jwtToken = localStorage.jwtToken;
 if (jwtToken) {
@@ -49,6 +50,7 @@ class App extends Component {
               <Route path="/settings" component={Settings} />
               <Route path="/dashboard" component={Dashboard} />
               <Route path="/apiedit/:documentId" component={ApiDocumentEdit} />
+              <Route path="/zapieredit/:documentId" component={ZapierDocumentEdit} />
               {
                 // Private Routes
               }

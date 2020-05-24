@@ -34,6 +34,7 @@ class Settings extends Component {
       errorMessage: "",
       imageLoadedSuccessfully: true
     });
+    window.location.reload();
   };
 
   displayErrorMessage = errMsg => {
