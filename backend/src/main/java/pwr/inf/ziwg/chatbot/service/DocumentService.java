@@ -226,6 +226,10 @@ public class DocumentService {
         }
         System.out.println(node.toString());
 
+        if(!node.has(parameter)) {
+            return "<i>Cannot find matching parameter. Check the template</i>";
+        }
+
         return node.getString(parameter);
     }
 
@@ -253,10 +257,11 @@ public class DocumentService {
         return template;
     }
 
-    public String getDocument(Request request) throws UnirestException {
+    public String getDocument(Request request, String name) throws UnirestException {
         String response = "";
 
         Map<String, String> paramsMap = getParamsMap(request.getConversation().getDocument().getParams(), request.getResponse().getParams());
+        paramsMap.put("user", name);
 
         Document document = request.getConversation().getDocument();
 
