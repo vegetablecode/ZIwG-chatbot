@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -177,5 +178,22 @@ public class UserService {
             }
         }
         return users;
+    }
+
+    public Map<String, String> updatePassword(Principal principal, Map<String, String> passwords) {
+        User currentUser = userRepository.findByUsername(principal.getName());
+
+        HashMap<String, String> response = new HashMap<>();
+        String oldPass = passwords.get("oldPassword");
+        String hashNew = bCryptPasswordEncoder.encode(passwords.get("newPassword"));
+
+        if (bCryptPasswordEncoder.matches(oldPass, currentUser.getPassword())) {
+            currentUser.setPassword(hashNew);
+            userRepository.save(currentUser);
+            response.put("status", "ok");
+        } else {
+            response.put("status", "error");
+        }
+        return response;
     }
 }
