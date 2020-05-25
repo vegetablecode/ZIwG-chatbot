@@ -14,6 +14,8 @@ public class Response {
     @JsonIgnore
     private Long id;
 
+    @Lob
+    @Column(length = 65535, columnDefinition = "Text")
     private String message;
     private String type; // "" means text
     private String rating;

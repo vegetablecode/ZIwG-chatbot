@@ -8,35 +8,22 @@ class UserRequest extends Component {
 
     let avatar;
     if (this.props.security.avatar === '') {
-      avatar = (
-        <div className='avatar-bg'>
-          <img
-            src={userDefaultAvatar}
-            alt='user-default-avatar'
-            className='avatar-image'
-          />
-        </div>
-      );
+      avatar = userDefaultAvatar;
     } else {
-      avatar = (
-        <div className='avatar-bg'>
-          <img
-            src={this.props.security.avatar}
-            alt='user-avatar'
-            className='avatar-image'
-          />
-        </div>
-      );
+      avatar = this.props.security.avatar;
     }
 
     return (
-      <div>
-        <div className='card indigo lighten-5 text-wrap chat-right box-shadow'>
-          {avatar}
-          <div className='message-text'>
-            <div>{request.question.query}</div>
+      <div className="flex items-start mb-4 text-sm">
+        <img src={avatar} className="w-10 h-10 rounded mr-3" />
+        <div className="flex-1 overflow-hidden">
+          <div>
+            <span className="font-bold">User</span>
+            <span className="text-grey text-xs"> {request.date}</span>
           </div>
-          <div className='message-date'>{request.date}</div>
+          <p className="text-black leading-normal">
+            {request.question.query}
+          </p>
         </div>
       </div>
     );

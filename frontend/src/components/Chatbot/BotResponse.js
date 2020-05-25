@@ -30,6 +30,10 @@ class BotResponse extends Component {
     return { __html: msg };
   };
 
+  handleImageLoaded() {
+    console.log("IMAGE IS LIVE");
+  }
+
   render() {
     const avatar = (
       <div className="avatar-bg">
@@ -39,12 +43,14 @@ class BotResponse extends Component {
 
     const { request } = this.props;
     const externalAPIResponse = request.response.type ? (
-      <ExternalAPIResponse request={request} />
+      <ExternalAPIResponse request={request} scrolling={this.props.scrolling} />
     ) : (
         ""
       );
     const responseText = request.response.message;
     const responseDate = request.date;
+
+    let myElement = "";
 
     // like button colors
     let thumbUpClass = "";
@@ -66,9 +72,12 @@ class BotResponse extends Component {
     let data;
     if (request.response.message === "") {
       data = (
-        <div>
-          <div className="card grey lighten-3 text-wrap chat-left box-shadow">
-            IBM Watson is thinking...
+        <div className="flex items-start mb-4 text-sm">
+          <img src={watsonAvatar} className="w-10 h-10 rounded mr-3" />
+          <div className="flex-1 overflow-hidden">
+            <div>
+              <span className="font-bold">Chatbot</span>
+            </div>
             <div id="wave">
               <span className="dot" />
               <span className="dot" />
@@ -79,34 +88,35 @@ class BotResponse extends Component {
       );
     } else {
       data = (
-        <div>
-          <div className="card grey lighten-3 text-wrap chat-left box-shadow">
-            <div className="like-icons">
-              <div className="row">
-                <button
-                  onClick={(e) => {
-                    this.handleBtnClick("liked");
-                    e.preventDefault()
-                  }}
-                  className={thumbUpClass}
-                  id={request.id}
-                >
-                  <FontAwesomeIcon icon={faThumbsUp} />
-                </button>
-                <button
-                  onClick={() => this.handleBtnClick("disliked")}
-                  className={thumbDownClass}
-                >
-                  <FontAwesomeIcon icon={faThumbsDown} />
-                </button>
-              </div>
+        <div className="flex items-start mb-4 text-sm">
+          <img src={watsonAvatar} className="w-10 h-10 rounded mr-3" />
+          <div className="flex-1 overflow-hidden">
+            <div>
+              <span className="font-bold">Chatbot</span>
+              <span className="text-grey text-xs"> {responseDate}</span>
             </div>
-            {avatar}
-            <div className="message-text">
-              <div dangerouslySetInnerHTML={this.createMarkup(responseText)} />
-            </div>
+            <div className="text-black leading-normal"
+              dangerouslySetInnerHTML={this.createMarkup(responseText)}
+            />
             <div>{externalAPIResponse}</div>
-            <div className="message-date">{responseDate}</div>
+            <div>
+              <button
+                onClick={(e) => {
+                  this.handleBtnClick("liked");
+                  e.preventDefault()
+                }}
+                className={thumbUpClass}
+                id={request.id}
+              >
+                <FontAwesomeIcon icon={faThumbsUp} />
+              </button>
+              <button
+                onClick={() => this.handleBtnClick("disliked")}
+                className={thumbDownClass}
+              >
+                <FontAwesomeIcon icon={faThumbsDown} />
+              </button>
+            </div>
           </div>
         </div>
       );

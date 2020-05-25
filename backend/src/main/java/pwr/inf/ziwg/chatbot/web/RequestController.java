@@ -96,8 +96,8 @@ public class RequestController {
             User currentUser = userService.getUser(principal.getName());
 
             // check for document (only if outside a node)
-            if(contextMap.get(currentUser.getCurrentConversationId()) == null) {
-                if(documentService.getDocumentType(text).isPresent()) {
+            if (contextMap.get(currentUser.getCurrentConversationId()) == null) {
+                if (documentService.getDocumentType(text).isPresent()) {
                     // document found - redirect message
                     input = new InputData.Builder("Generic question").build();
                     currentDocument = documentService.getDocumentType(text).get();
@@ -117,6 +117,33 @@ public class RequestController {
                             .input(input)
                             .build();
 
+            // check if answer is OK
+            Request cRequest = requestService.findLastUserRequest(principal.getName());
+            if (cRequest != null) {
+                if (cRequest.getConversation().getDocument() != null) {
+                    Document doc = cRequest.getConversation().getDocument();
+                    int numberOfParams = doc.getParams().size();
+                    int numberOfSavedParams = cRequest.getResponse().getParams().keySet().size();
+                    if (numberOfSavedParams < numberOfParams) {
+                        String regex = doc.getParams().get(numberOfSavedParams).getRegex();
+                        // if there is any regex - check
+                        if (regex != "") {
+                            if (!text.matches(regex)) {
+                                // we don't have a match - ask again
+                                Question cQuestion = cRequest.getQuestion();
+                                cQuestion.setQuery(text);
+                                Response cResponse = cRequest.getResponse();
+                                String newMessage = "Invalid parameter. " + cResponse.getMessage();
+                                cResponse.setMessage(newMessage);
+                                cRequest.setResponse(cResponse);
+                                return new ResponseEntity<Request>(cRequest, HttpStatus.CREATED);
+                            }
+                        }
+                        System.out.println("__CHECK REGEX: " + regex);
+                    }
+                }
+            }
+
             // get response & save new context
             response = service.message(options).execute();
             conversationContext = response.getContext();
@@ -129,7 +156,7 @@ public class RequestController {
             request.setResponse(res);
 
             Conversation conversation = requestService.getCurrentConversation(conversationContext.getConversationId());
-            if(currentDocument != null)
+            if (currentDocument != null)
                 conversation.setDocument(currentDocument);
             conversation.setWatsonId(conversationContext.getConversationId()); // conversation ID
             request.setConversation(conversation);
@@ -204,16 +231,16 @@ public class RequestController {
         request.setResponse(r);
 
         // if it's inside document node - catch
-        if(request.getConversation().getIntent().equals("Generic_question")) {
+        if (request.getConversation().getIntent().equals("Generic_question")) {
             Response documentResponse = request.getResponse();
             String prevMessage = documentResponse.getMessage();
             String convertedMessage = documentService.mapResponse(prevMessage, request.getConversation().getDocument());
             documentResponse.setMessage(convertedMessage);
 
-            if(convertedMessage.isEmpty()) {
+            if (convertedMessage.isEmpty()) {
                 // all parameters collected - get the document
                 Response prevRes = request.getResponse();
-                prevRes.setMessage(documentService.getDocument(request));
+                prevRes.setMessage(documentService.getDocument(request, principal.getName()));
                 request.setResponse(prevRes);
 
                 // new context

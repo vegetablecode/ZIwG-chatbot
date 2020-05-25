@@ -11,12 +11,16 @@ import UserRequest from './Chatbot/UserRequest';
 import BotResponse from './Chatbot/BotResponse';
 import IdleTimer from 'react-idle-timer';
 import EmptyResponse from './Chatbot/EmptyResponse';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons'
+import AvatarNav from './Chatbot/AvatarNav';
+import "../styles/Chatbot.css";
 
 class Chatbot extends Component {
   state = {
     question: '',
     message: '',
-    getRequestPages: 0,
+    getRequestPages: 10,
   };
 
   onIdle = (e) => {
@@ -59,15 +63,15 @@ class Chatbot extends Component {
 
   componentDidUpdate() {
     this.scrollToBottom();
+    // setTimeout(function () {
+    //   var messageBody = document.querySelector('#messageBody');
+    //   messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
+    // }, 3000);
   }
 
   scrollToBottom = () => {
-    if (this.state.getRequestPages === 0) {
-      const scrollHeight = this.messageList.scrollHeight;
-      const height = this.messageList.clientHeight;
-      const maxScrollTop = scrollHeight - height;
-      this.messageList.scrollTop = maxScrollTop > 0 ? maxScrollTop : 0;
-    }
+    var messageBody = document.querySelector('#messageBody');
+    messageBody.scrollTop = messageBody.scrollHeight - messageBody.clientHeight;
   };
 
   LoadMoreMessages = () => {
@@ -82,9 +86,7 @@ class Chatbot extends Component {
     }
   };
 
-  onSubmit = (length) => (e) => {
-    e.preventDefault();
-
+  onSubmit = () => {
     // save temp question in redux store
     this.props.addTempRequest(this.state.question);
 
@@ -117,7 +119,7 @@ class Chatbot extends Component {
     let requestList = requests.map((request) => (
       <div key={request.id}>
         <UserRequest request={request} />
-        <BotResponse request={request} />
+        <BotResponse request={request} scrolling={this.scrollToBottom} />
       </div>
     ));
 
@@ -138,41 +140,50 @@ class Chatbot extends Component {
           debounce={250}
           timeout={1000 * 60 * 5}
         />
-        <div className='container'>
-          <div
-            className='chat-box grey lighten-2 MessageList'
-            onScroll={this.LoadMoreMessages}
-            ref={(div) => {
-              this.messageList = div;
-            }}
-          >
-            <div id='loader'>
-              <div />
-              <div />
-              <div />
-              <div />
+        <div className="font-sans antialiased h-screen flex">
+          {/* Chat content */}
+          <div className="flex-1 flex flex-col bg-white overflow-hidden">
+            {/* Top bar */}
+            <div className="border-b flex px-6 py-2 items-center flex-none">
+              <div className="flex flex-col">
+                <h3 className="text-grey-darkest mb-1 font-extrabold">ZIwG Chatbot</h3>
+                <div className="text-grey-dark text-sm truncate">
+                  Don't hesitate to ask me any question!
+        </div>
+              </div>
+              <div className="ml-auto md:block">
+                <div className="relative">
+                  <AvatarNav />
+                </div>
+              </div>
             </div>
-            <div>{requestList}</div>
-          </div>
-          <div>
-            <form onSubmit={this.onSubmit(length)} className='row submit-query'>
-              <input
-                ref={(input) => {
-                  this.nameInput = input;
-                }}
-                className='col s10'
-                name='question'
-                id='text'
-                type='text'
-                placeholder='Your message'
-                value={this.state.question}
-                onChange={this.onChange}
-              />
-              <input
-                className='waves-effect waves-light btn-small green darken-2 btn-trial-consultor col s2'
-                type='submit'
-              />
-            </form>
+            {/* Chat messages */}
+            <div className="px-6 py-4 flex-1 overflow-y-scroll cbot" id="messageBody">
+              {requestList}
+            </div>
+            <div className="pb-6 px-4 flex-none">
+              <div className="flex rounded-lg border-2 border-grey overflow-hidden">
+                <input
+                  ref={(input) => {
+                    this.nameInput = input;
+                  }}
+                  name='question'
+                  id='text'
+                  placeholder='Your message'
+                  value={this.state.question}
+                  onChange={this.onChange}
+                  type="text" className="w-full px-4"
+                  onKeyPress={event => {
+                    if (event.key === 'Enter') {
+                      this.onSubmit()
+                    }
+                  }}
+                />
+                <span className="text-3xl text-grey border-l-2 border-grey p-2 cursor-pointer" onClick={this.onSubmit}>
+                  <FontAwesomeIcon className="h-6 w-6 block" icon={faArrowUp} color="#9babb4" size="xs" />
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

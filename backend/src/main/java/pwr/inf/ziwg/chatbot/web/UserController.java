@@ -1,5 +1,6 @@
 package pwr.inf.ziwg.chatbot.web;
 
+import pwr.inf.ziwg.chatbot.domain.Response;
 import pwr.inf.ziwg.chatbot.domain.User;
 import pwr.inf.ziwg.chatbot.payload.JWTLoginSucessResponse;
 import pwr.inf.ziwg.chatbot.payload.LoginRequest;
@@ -119,6 +120,25 @@ public class UserController {
         }
 
         return new ResponseEntity<Map>(userList, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUserDetails")
+    public ResponseEntity<?> getAllUserDetails(Principal principal) {
+        User currentUser;
+        List<User> users = new ArrayList<>();
+
+        if(principal != null) {
+            currentUser = userService.getUser(principal.getName());
+            users = userService.getAllUserDetails(currentUser);
+        }
+
+        return new ResponseEntity<List>(users, HttpStatus.OK);
+    }
+
+    @PostMapping("/updatePassword")
+    public ResponseEntity<?> updatePassword(@RequestBody Map<String, String> passwords, Principal principal) {
+        Map<String, String> response = userService.updatePassword(principal, passwords);
+        return new ResponseEntity<Map<String, String>>(response, HttpStatus.OK);
     }
 
     @PostMapping("/giveAdmin")

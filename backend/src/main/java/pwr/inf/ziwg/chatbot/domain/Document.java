@@ -2,7 +2,9 @@ package pwr.inf.ziwg.chatbot.domain;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Document {
@@ -13,18 +15,24 @@ public class Document {
 
     private String keywords;
 
-    @OneToMany(targetEntity = DocumentParameter.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(targetEntity = DocumentParameter.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<DocumentParameter> params = new ArrayList<>();
 
-    @OneToMany(targetEntity = Header.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Header>  headers = new ArrayList<>();
+    @OneToMany(targetEntity = Header.class, mappedBy = "document", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Header> headers = new ArrayList<>();
 
     private String type;
 
     // API
     private String endpoint;
     private String method;
+
+    @Lob
+    @Column(length = 65535,columnDefinition="Text")
     private String body;
+
+    @Lob
+    @Column(length = 65535,columnDefinition="Text")
     private String template;
 
     public Document() {
@@ -113,4 +121,5 @@ public class Document {
     public void setHeaders(List<Header> headers) {
         this.headers = headers;
     }
+
 }
