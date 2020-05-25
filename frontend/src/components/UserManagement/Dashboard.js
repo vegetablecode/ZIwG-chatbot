@@ -121,7 +121,7 @@ class Dashboard extends Component {
               onChange={(e) => this.setState({ statusToShow: e.target.value })}
             />
             <TableWithBrowserPagination pageSize={5} data={this.state.statusToShow === 'negative' ? this.state.negativeRatedResponses : this.state.positiveRatedResponses} keyField="id">
-              <Column header="User" field="id" />
+              <Column header="User" field="requestOwner" />
               <Column header="Question" field="question.query" />
               <Column header="Intent" field="conversation.intent" />
               <Column header="Response" field="response.message" />
